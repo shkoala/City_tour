@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#edf3ed">
+  <meta name="description" content="City_tour: explore Mr Cole’s town. Read messages, follow English directions and find your way.">
+  <title>City_tour · ШКОАЛА</title>
+  <link rel="icon" href="assets/cole-south.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="header">
+      <a class="brand" href="https://vk.ru/abc_shkoala" target="_blank" rel="noopener noreferrer" aria-label="ШКОАЛА · ВКонтакте"><img class="brand-logo-img" src="assets/shkoala-logo.png" alt="ШКОАЛА — Для тех, кто учит и учится"><span class="game-wordmark"><b>City_tour</b><small>WITH MR COLE</small></span></a>
+      <nav class="modes" aria-label="Game modes">
+        <button class="mode active" data-mode="missions" aria-pressed="true"><span>01</span> Missions</button>
+        <button class="mode" data-mode="directions" aria-pressed="false"><span>02</span> Follow directions</button>
+        <button class="mode" data-mode="free" aria-pressed="false"><span>03</span> Free walk</button>
+      </nav>
+      <div class="header-tools"><span class="score" id="score">★ <b>0</b></span><button class="icon-btn" id="pause" aria-label="Pause game" title="Pause game">Ⅱ</button><button class="icon-btn" id="fullscreen" aria-label="Full screen" title="Full screen">⛶</button><button class="icon-btn" id="settings" aria-label="Teacher studio" title="Teacher studio">⚙</button></div>
+    </header>
+    <main class="main">
+      <section class="map-card" aria-label="Mr Cole’s interactive town">
+        <div class="map-heading"><div class="map-title"><span class="eyebrow">FIND YOUR WAY. HELP A FRIEND.</span><h1>City_tour</h1></div><div class="live-label"><i></i><span>Live town</span><span class="north">N ↑</span></div></div>
+        <div class="map" id="map" tabindex="0" aria-label="Town map. Open a message to start. Arrow keys turn and walk Mr Cole.">
+          <svg id="townArt" viewBox="0 0 1448 1086" role="img" aria-label="A 3D town with hospital, park, school, theatre, cinema, café, baker’s, garage, police station, post office, library, greengrocer’s and bus stop"></svg>
+          <svg id="pathOverlay" viewBox="0 0 1448 1086" aria-hidden="true"></svg>
+          <div id="spots" class="spots"></div>
+          <div id="trafficLayer" class="traffic-layer" aria-hidden="true"></div>
+          <svg id="occlusionLayer" viewBox="0 0 1448 1086" aria-hidden="true"></svg>
+          <div id="signalLayer" class="signal-layer" aria-hidden="true"></div>
+          <div id="cole" class="cole" role="img" aria-label="Mr Cole"><div class="cole-shadow"></div><img id="coleSprite" src="assets/cole-east.png" alt="" draggable="false"><span class="cole-wait" id="coleWait">Wait for green</span></div>
+          <div class="pause-cover" id="pauseCover" hidden><span>Ⅱ</span><b>A little pause.</b><button id="resume" class="btn primary">Continue exploring</button></div>
+          <div id="walkHint" class="walk-hint" hidden>Tap the pavement to walk</div>
+          <div id="controls" class="controls" hidden></div>
+        </div>
+        <div class="map-bottom"><div class="location"><span class="mini-cole">🐨</span><div><b id="position">At the bus stop</b><small id="heading">Facing right · open your message to begin</small></div></div><div id="controlLauncher"></div></div>
+      </section>
+      <aside class="phone-column" aria-label="Phone and mission">
+        <div class="phone" id="phone"><div class="phone-glass"><div class="phone-top"><span id="clock">09:41</span><span class="island"></span><span class="phone-icons">▴ ◒ ▰</span></div><div class="phone-area" id="phoneArea"></div><div class="phone-home"></div></div></div>
+        <div class="mode-caption"><span id="modeNumber">01 / MISSIONS</span><p id="modeDescription">A message. A little mystery.<br>Find the place and help a friend.</p></div>
+      </aside>
+    </main>
+    <footer class="footer"><a class="vk-link" href="https://vk.ru/abc_shkoala" target="_blank" rel="noopener noreferrer">ВКонтакте · ШКОАЛА ↗</a><div class="footer-actions"><button id="help">How to play <span>↗</span></button><a class="more-games" href="https://vk.ru/abc_shkoala?w=donut_payment-190039625&amp;levelId=3559" target="_blank" rel="noopener noreferrer">Больше игр <span>↗</span></a></div></footer>
+  </div>
+  <dialog id="studio" class="studio"><div class="dialog-title"><div><span class="eyebrow">MAKE IT YOUR LESSON</span><h2>Teacher studio</h2></div><button class="icon-btn close-dialog" aria-label="Close teacher studio">×</button></div>
+    <div class="studio-tabs"><button class="active" data-studio="lesson">Lesson</button><button data-studio="messages">Your messages</button><button data-studio="guide">Guide · RU</button></div>
+    <div class="studio-page" data-page="lesson">
+      <label class="setting"><span><b>Place names</b><small>Show names above the buildings</small></span><input type="checkbox" id="showNames"></label>
+      <label class="setting"><span><b>Walking guide</b><small>Reveal the connected pavement routes</small></span><input type="checkbox" id="showPaths"></label>
+      <label class="setting"><span><b>Read messages aloud</b><small>English voice · message bubbles only</small></span><input type="checkbox" id="speech"></label>
+      <label class="setting"><span><b>Moving traffic</b><small>Pause decorative cars and keep safe crossings open</small></span><input type="checkbox" id="trafficToggle" checked></label>
+      <div class="studio-actions"><button id="resetBus" class="btn soft">Return Cole to the bus stop</button><button id="resetLesson" class="btn subtle">Start a new lesson</button></div>
+      <p class="storage-note">Settings, custom messages and completed missions stay on this device.</p>
+    </div>
+    <div class="studio-page" data-page="messages" hidden>
+      <form id="missionForm"><label>Sender<input id="sender" required maxlength="40" placeholder="Mum"></label><label>Message<textarea id="message" required maxlength="500" rows="3" placeholder="Could you get some fresh bread for dinner?"></textarea></label><label>Destination<select id="destination"></select></label><button class="btn primary" type="submit">Add message <span>＋</span></button></form>
+      <div class="custom-list" id="customList"></div><div class="studio-actions"><button id="export" class="btn soft">Export messages ↓</button><button id="import" class="btn soft">Import messages ↑</button><input id="importFile" type="file" accept=".json,application/json" hidden></div><p class="storage-note" id="importStatus" role="status"></p>
+    </div>
+    <div class="studio-page guide" data-page="guide" hidden>
+      <h3>Три способа играть</h3><p><b>Missions.</b> Откройте сообщение, нажмите <i>On my way!</i> и догадайтесь, куда нужно идти. Дойдите до входа и нажмите <i>I’m here!</i> в телефоне.</p><p><b>Follow directions.</b> Прочитайте маршрут. Пройдите его Коулом и напишите место встречи. Проверяются и путь, и ответ. Если свернули не туда, вернитесь по своим следам или начните маршрут заново.</p><p><b>Free walk.</b> Выберите стрелки или ходьбу по клику. При клике Коул сам идёт по тротуарам. Можно давать устные инструкции.</p>
+      <h3>Управление относительно Коула</h3><p><b>↑</b> — вперёд. <b>← / →</b> — повернуться налево / направо. <b>↓</b> — развернуться. Поворот меняет ракурс всего тела. Кнопки открываются через <i>Walk controls</i> и сворачиваются после движения. <b>Esc</b> — свернуть их.</p><p><b>Go past…</b> — пройти мимо ближайшего здания в направлении взгляда и остановиться за ним. Кнопка появляется, когда такое действие возможно. Она находится в дополнительных командах.</p>
+      <h3>Дороги и светофоры</h3><p>Коул ходит по плитке. Улицу пересекает только по зебре: автоматически ждёт зелёный сигнал. Машины тормозят перед красным и жёлтым; машина, уже въехавшая за стоп-линию, заканчивает проезд. Пока Коул на переходе, машинам горит красный.</p><p>Чтобы убрать движение для урока, выключите <i>Moving traffic</i>. Настройки учителя — через ⚙. Полноэкранный режим — через ⛶.</p>
+    </div>
+  </dialog>
+  <dialog id="welcome" class="welcome"><button class="icon-btn close-dialog" aria-label="Close help">×</button><span class="eyebrow">YOUR TOWN IS WAITING</span><h2>Small messages.<br>Big adventures.</h2><div class="welcome-content"><img src="assets/cole-south.png" alt="Mr Cole in his mint cardigan"><div><p>Read a message. Find a place.<br>Help Mr Cole get there.</p><p>Turn with <kbd>←</kbd> <kbd>→</kbd><br>Walk with <kbd>↑</kbd><br>Turn around with <kbd>↓</kbd></p><small>Left and right are always Mr Cole’s.</small></div></div><button id="welcomeGo" class="btn primary">Let’s explore <span>→</span></button></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <script src="world.js"></script><script src="traffic.js"></script><script src="walker.js"></script><script src="draw.js"></script><script src="app.js"></script>
+</body>
+</html>
