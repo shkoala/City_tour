@@ -41,7 +41,7 @@
   function pulse(id){const n=W.nodes[id],el=$('arrivalRing');el.setAttribute('cx',n.x);el.setAttribute('cy',n.y);el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1600);}
   function renderLocation(){
     const n=W.nodes[walker.location],facing={N:'up',E:'right',S:'down',W:'left'}[walker.facing];
-    $('position').textContent=walker.waiting?'Waiting at the crossing':walker.busy?'Walking through town':n.place?'Outside '+W.venues[n.place].article:'At the pavement junction';
+    $('position').textContent=walker.waiting?'Waiting on the pavement':walker.busy?'Walking through town':n.place?'Outside '+W.venues[n.place].article:n.kind==='end'?'At the end of the pavement':n.kind==='corner'?'At a pavement corner':'At the pavement junction';
     $('heading').textContent='Facing '+facing+' · '+(s.mode==='free'&&s.freeControl==='click'?'tap the pavement near a place':isActive()?'turn first, then walk':'open your message to begin');
   }
   function renderModes(){
@@ -171,7 +171,7 @@
       traffic.cars.forEach(c=>{const el=$('car-'+c.id);el.style.left=c.x/W.W*100+'%';el.style.top=([[280,300],[550,574],[831,855]][c.road][c.dir===1?0:1])/W.H*100+'%';el.classList.toggle('braking',c.speed<4);el.style.opacity=Math.max(0,Math.min(1,(c.x-125)/35,(1320-c.x)/35));});
       traffic.signals.forEach(sig=>$('signal-'+sig.id).dataset.phase=sig.phase);
     }
-    const cole=$('cole');cole.style.left=walker.x/W.W*100+'%';cole.style.top=walker.y/W.H*100+'%';cole.classList.toggle('walking',walker.moving&&!isPaused());cole.classList.toggle('waiting',walker.waiting);
+    const cole=$('cole');cole.style.left=walker.x/W.W*100+'%';cole.style.top=walker.y/W.H*100+'%';cole.classList.toggle('walking',walker.moving&&!isPaused());cole.classList.toggle('waiting',walker.waiting);cole.dataset.location=walker.location;cole.dataset.busy=String(walker.busy);cole.dataset.onPavement=String(W.isOnPavement(walker.x,walker.y));
     const turning=turnUntil>ts;const filename=turning?(walker.facing==='N'||walker.facing==='W'?'cole-diagonal_back.png':'cole-diagonal.png'):'cole-'+({N:'north',S:'south',E:'east',W:'west'}[walker.facing])+'.png';
     if($('coleSprite').dataset.file!==filename){$('coleSprite').src=asset('assets/'+filename);$('coleSprite').dataset.file=filename;}
     if(previousFacing!==walker.facing){previousFacing=walker.facing;renderLocation();}
@@ -230,3 +230,4 @@
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
   window.cityMessages={getState:()=>({mode:s.mode,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
+
