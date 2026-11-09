@@ -168,9 +168,8 @@
     const dt=lastFrame?Math.min((ts-lastFrame)/1000,2):0;lastFrame=ts;
     if(!isPaused()){
       for(let remaining=dt;remaining>0;remaining-=.025){const step=Math.min(remaining,.025);traffic.tick(step);walker.tick(step);}
-      traffic.cars.forEach(c=>{const el=$('car-'+c.id);el.style.left=c.x/W.W*100+'%';el.style.top=([[280,300],[550,574],[831,855]][c.road][c.dir===1?0:1])/W.H*100+'%';el.classList.toggle('braking',c.speed<4);el.style.opacity=Math.max(0,Math.min(1,(c.x-125)/35,(1320-c.x)/35));});
-      traffic.signals.forEach(sig=>$('signal-'+sig.id).dataset.phase=sig.phase);
     }
+    window.CityDraw.update(traffic,walker);
     const cole=$('cole');cole.style.left=walker.x/W.W*100+'%';cole.style.top=walker.y/W.H*100+'%';cole.classList.toggle('walking',walker.moving&&!isPaused());cole.classList.toggle('waiting',walker.waiting);cole.dataset.location=walker.location;cole.dataset.busy=String(walker.busy);cole.dataset.onPavement=String(W.isOnPavement(walker.x,walker.y));
     const turning=turnUntil>ts;const filename=turning?(walker.facing==='N'||walker.facing==='W'?'cole-diagonal_back.png':'cole-diagonal.png'):'cole-'+({N:'north',S:'south',E:'east',W:'west'}[walker.facing])+'.png';
     if($('coleSprite').dataset.file!==filename){$('coleSprite').src=asset('assets/'+filename);$('coleSprite').dataset.file=filename;}
@@ -230,4 +229,5 @@
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
   window.cityMessages={getState:()=>({mode:s.mode,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
+
 

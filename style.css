@@ -13,3 +13,16 @@
 @media(max-width:920px){.brand{min-width:240px}.brand-logo-img{width:160px;height:48px}.game-wordmark b{font-size:21px}}
 @media(max-width:700px){.brand{min-width:0;gap:10px}.brand-logo-img{width:138px;height:42px}.game-wordmark b{font-size:18px}.game-wordmark small{font-size:6px}.footer{font-size:9px}.footer .more-games{padding:8px 12px;font-size:10px}.footer-actions{gap:13px}}
 @media(max-width:430px){.brand-logo-img{width:125px;height:39px}.brand{gap:6px}.game-wordmark{padding-left:7px}.game-wordmark b{font-size:16px}.game-wordmark small{font-size:5px;letter-spacing:1px}.footer{font-size:8px}.footer-actions{gap:8px}.footer .more-games{font-size:9px;padding:7px 9px}}
+
+/* Only individual actors create stacking contexts, ordered by their ground y. */
+.map .traffic-layer,.map .signal-layer,.map #occlusionLayer{position:absolute;inset:0;z-index:auto;overflow:visible;pointer-events:none}
+.car-frame,.foreground{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.map .vehicle{filter:none}
+.map .vehicle.braking{filter:drop-shadow(-1px 0 1px #f35d5533)}
+.map .signal{width:1.2%;height:auto;aspect-ratio:18/43;transform:translate(-50%,-100%);filter:drop-shadow(1px 1px 1px #243f4333)}
+.map .signal-pole{left:33%;top:auto;bottom:0;width:17%;height:52%;background:#334e4a}
+.map .lamps{left:0;top:0;width:82%;height:69%;padding:13% 18%;gap:10%;border-radius:22%;border-width:1px}
+.map .lamps i{width:100%;height:25%;flex:none}
+.map .signal .pedestrian{right:-46%;top:32%;width:62%;height:28%;padding:0;display:grid;place-items:center;font-size:clamp(3px,.5vw,8px);border-radius:22%}
+.map .cole{min-width:0}
+.map .controls{z-index:20002}.map .walk-hint{z-index:20001}.map .pause-cover{z-index:20003}

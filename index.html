@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-navigation-version="20261107-safe-stops">
+<html lang="en" data-navigation-version="20261109-pavements">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -28,7 +28,7 @@
           <svg id="pathOverlay" viewBox="0 0 1448 1086" aria-hidden="true"></svg>
           <div id="spots" class="spots"></div>
           <div id="trafficLayer" class="traffic-layer" aria-hidden="true"></div>
-          <svg id="occlusionLayer" viewBox="0 0 1448 1086" aria-hidden="true"></svg>
+          <div id="occlusionLayer" aria-hidden="true"></div>
           <div id="signalLayer" class="signal-layer" aria-hidden="true"></div>
           <div id="cole" class="cole" role="img" aria-label="Mr Cole"><div class="cole-shadow"></div><img id="coleSprite" src="assets/cole-east.png" alt="" draggable="false"><span class="cole-wait" id="coleWait">Wait for green</span></div>
           <div class="pause-cover" id="pauseCover" hidden><span>Ⅱ</span><b>A little pause.</b><button id="resume" class="btn primary">Continue exploring</button></div>
@@ -67,7 +67,9 @@
   <dialog id="welcome" class="welcome"><button class="icon-btn close-dialog" aria-label="Close help">×</button><span class="eyebrow">YOUR TOWN IS WAITING</span><h2>Small messages.<br>Big adventures.</h2><div class="welcome-content"><img src="assets/cole-south.png" alt="Mr Cole in his mint cardigan"><div><p>Read a message. Find a place.<br>Help Mr Cole get there.</p><p>Turn with <kbd>←</kbd> <kbd>→</kbd><br>Walk with <kbd>↑</kbd><br>Turn around with <kbd>↓</kbd></p><small>Left and right are always Mr Cole’s.</small></div></div><button id="welcomeGo" class="btn primary">Let’s explore <span>→</span></button></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div class="sr-only" id="announcer" aria-live="polite"></div>
-  <script src="world.js?v=20261107-safe-stops"></script><script src="traffic.js?v=20261107-safe-stops"></script><script src="walker.js?v=20261107-safe-stops"></script><script src="draw.js?v=20261107-safe-stops"></script><script src="app.js?v=20261107-safe-stops"></script>
+  <script src="world.js?v=20261109-pavements"></script><script src="traffic.js?v=20261109-pavements"></script><script src="walker.js?v=20261109-pavements"></script><script src="scene.js?v=20261109-pavements"></script>
+<script src="draw.js?v=20261109-pavements"></script><script src="app.js?v=20261109-pavements"></script>
 </body>
 </html>
+
 
