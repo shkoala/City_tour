@@ -22,3 +22,5 @@ jobs:
         run: node build.cjs
       - name: Verify standalone edition
         run: node verify-build.cjs
+      - name: Verify committed offline edition is current
+        run: git diff --exit-code -- City_tour.html
