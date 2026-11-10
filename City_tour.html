@@ -56,7 +56,6 @@
 .phone .timestamp{line-height:1.5}.phone .chat-scroll{overscroll-behavior:contain;scrollbar-width:thin}
 .welcome-content p{line-height:1.65}.guide p{line-height:1.8}
 @media(max-width:700px){.bubble{font-size:13px}.route-step{font-size:12px}.chat-person small{font-size:9px}}
-
 </style>
   
 </head>
@@ -260,7 +259,6 @@ function routeTask(start,facing,serial=0){
 root.CityWorld={W,H,dirs,places,venues,nodes,edges,edgeList,crossings,parcels,obstacles,pavementZones:parcels,isOnPavement,isSafeStop,inPolygon,direction,edge,geometry,shortestPath,neighbour,pastPath,pastLandmark,answerMatches,normalise,missions,walks,routeTask,instructionsFor};
 if(typeof module!=='undefined')module.exports=root.CityWorld;
 })(typeof window!=='undefined'?window:globalThis);
-
 </script><script>/* Four persistent cars follow both lanes of a continuous town circuit. */
 (function(root){
 'use strict';
@@ -361,7 +359,6 @@ class Walker{
 }
 root.CityWalker=Walker;if(typeof module!=='undefined')module.exports=Walker;
 })(typeof window!=='undefined'?window:globalThis);
-
 </script><script>(function(root){
 'use strict';
 const source='assets/town-map-20261110.webp';
@@ -392,7 +389,6 @@ const bankCurrency={symbol:'£',x:1162,y:866,r:24};
 root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency};
 if(typeof module!=='undefined')module.exports=root.CitySceneGeometry;
 })(typeof window!=='undefined'?window:globalThis);
-
 </script><script>(function(root){
 'use strict';
 const geometry=root.CitySceneGeometry||(typeof require!=='undefined'?require('./scene-geometry.js'):null);
