@@ -24,7 +24,23 @@ const bakedSignals=[
 {id:'h2-west',x:215,y:766,w:35,h:51,foot:839,road:'h2'},
 {id:'h2-east',x:1201,y:767,w:36,h:51,foot:839,road:'h2'}
 ];
+// Measured asphalt boundaries include zebras, but exclude tram tracks and kerbs.
+const roadSurfaces=[
+ [[493,-100],[537,-100],[537,230],[541,284],[490,284],[494,230]],
+ [[909,-100],[959,-100],[957,65],[958,150],[961,200],[967,278],[978,344],[981,430],[984,480],[990,550],[996,650],[1000,730],[1005,778],[1005,845],[1009,1087],[952,1087],[951,845],[956,778],[956,730],[951,650],[944,550],[939,480],[937,430],[932,344],[917,278],[918,200],[914,150],[911,65]],
+ [[160,282],[1290,282],[1300,328],[160,328]],
+ [[138,278],[175,278],[203,282],[203,328],[188,331],[175,344],[134,344],[128,327]],
+ [[134,330],[141,380],[137,430],[131,480],[121,550],[107,650],[96,730],[91,768],[89,790],[134,790],[134,768],[134,730],[140,650],[151,550],[158,480],[164,430],[169,380],[175,344],[189,330]],
+ [[91,756],[134,756],[134,770],[149,783],[186,783],[186,835],[101,835],[88,799]],
+ [[115,783],[1320,783],[1330,835],[110,835]],
+ [[479,835],[533,835],[533,1087],[476,1087]]
+];
+const northRoads=[
+ {id:'north-west',polygon:[[493,-2],[537,-2],[537,68],[494,68]],left:[[493,-2],[494,68]],right:[[537,-2],[537,68]],centre:[[515,-2],[515.5,68]]},
+ {id:'north-east',polygon:[[909,-2],[959,-2],[957,68],[912,68]],left:[[909,-2],[912,68]],right:[[959,-2],[957,68]],centre:[[934,-2],[934.5,68]]}
+];
+function onAsphalt(x,y){return roadSurfaces.some(poly=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [ax,ay]=poly[i],[bx,by]=poly[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;});}
 const bankCurrency={symbol:'£',x:1162,y:866,r:24};
-root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency};
+root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,onAsphalt};
 if(typeof module!=='undefined')module.exports=root.CitySceneGeometry;
 })(typeof window!=='undefined'?window:globalThis);
