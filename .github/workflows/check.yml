@@ -10,6 +10,7 @@ jobs:
       - name: Check browser JavaScript syntax
         run: |
           node --check app.js
+          node --check scene-geometry.js
           node --check scene.js
           node --check draw.js
           node --check world.js
@@ -17,4 +18,7 @@ jobs:
           node --check walker.js
       - name: Verify map, crossings, traffic and routes
         run: node tests.cjs
-
+      - name: Build static and offline editions
+        run: node build.cjs
+      - name: Verify standalone edition
+        run: node verify-build.cjs

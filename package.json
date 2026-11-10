@@ -1,0 +1,10 @@
+{
+  "name": "city-tour-shkoala",
+  "version": "4.0.0",
+  "private": true,
+  "description": "City_tour: Mr Cole visits family in Australia. English directions and places in town.",
+  "scripts": {
+    "test": "node tests.cjs",
+    "build": "node build.cjs"
+  }
+}

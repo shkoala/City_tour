@@ -26,3 +26,24 @@
 .map .signal .pedestrian{right:-46%;top:32%;width:62%;height:28%;padding:0;display:grid;place-items:center;font-size:clamp(3px,.5vw,8px);border-radius:22%}
 .map .cole{min-width:0}
 .map .controls{z-index:20002}.map .walk-hint{z-index:20001}.map .pause-cover{z-index:20003}
+
+/* Actors are ordered by their contact with the ground. */
+.map .traffic-layer,.map .signal-layer,.map #occlusionLayer{position:absolute;inset:0;z-index:auto;overflow:visible;pointer-events:none}
+.car-frame,.foreground,.signal-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.map .vehicle{filter:none}.map .vehicle.braking{filter:drop-shadow(-1px 0 1px #f35d5533)}
+.map .controls{z-index:20002}.map .walk-hint{z-index:20001}.map .pause-cover{z-index:20003}
+.signal-frame .lamp{fill:#354a40;stroke:#526756;stroke-width:.6}
+.signal-frame[data-phase='green'] .green{fill:#9ceb9a;stroke:#bfffb0}
+.signal-frame[data-phase='amber'] .amber{fill:#ffd773;stroke:#ffe7ac}
+.signal-frame[data-phase='clear'] .red,.signal-frame[data-phase='walk'] .red{fill:#ff7469;stroke:#ffc1a1}
+.signal-frame .pedestrian-lamp{stroke:#ed8a77}.signal-frame[data-phase='walk'] .pedestrian-lamp{stroke:#b3f4bc}
+.vehicle.braking .brake-light{fill:#ff5b54}
+.map .cole{width:3.65%;min-width:0;aspect-ratio:250/365}
+.map .cole img{clip-path:inset(4.7% 0 0 0)}
+.thread-body small{display:block;margin-top:4px;color:#8a9c8e;font-size:9px;line-height:1.35;font-weight:500}
+.chat-person small{white-space:normal;line-height:1.3;max-width:160px;font-size:9px}
+.bubble{font-size:14px;line-height:1.65}.route-step{font-size:13px;line-height:1.65}
+.route-label{line-height:1.5}.route-step.done{opacity:.65}.route-step.active{background:#e9f0e2}
+.phone .timestamp{line-height:1.5}.phone .chat-scroll{overscroll-behavior:contain;scrollbar-width:thin}
+.welcome-content p{line-height:1.65}.guide p{line-height:1.8}
+@media(max-width:700px){.bubble{font-size:13px}.route-step{font-size:12px}.chat-person small{font-size:9px}}
