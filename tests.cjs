@@ -31,13 +31,22 @@ for(const p of W.places){const t=new Traffic(W.crossings),w=new Walker(W,t);ok(w
  const t=new Traffic(W.crossings),w=new Walker(W,t);t.setEnabled(false);ok(w.walk(W.walks[0].path));simulate(t,w,10);eq(w.location,'post');ok(!w.busy);t.setEnabled(true);simulate(t,w,12);ok(t.mode!=='clear','Traffic resumes without deadlock');
  w.reset('bN','N');ok(w.walk(['bN','mCrossE']));for(let i=0;i<1800&&!w.held;i++){t.tick(1/60);w.tick(1/60);}ok(w.held);const held=w.held;t.setEnabled(true);eq(t.signal(held).phase,'walk','Unchanged settings preserve an occupied crossing');w.reset();eq(t.signal(held).occupants.size,0,'Reset releases interlock');
 }
+// Traffic must be continuous: four stable actors, both directions, real turns,
+// no opacity fades, no teleport at the circuit seam, no pavement clipping.
 {
- const t=new Traffic(W.crossings);let modes=new Set(),collisions=0;
- for(let i=0;i<180*60;i++){t.tick(1/60);modes.add(t.mode);for(const c of t.cars)if(c.opacity>.7){if(c.road==='h1')ok(c.x>180&&c.x<1264,'Upper cars stay within the street');if(c.road==='h2')ok(c.x>128&&c.x<1304,'Lower cars stay within the street');}for(const sig of t.signals)if(sig.phase==='walk')ok(t.clear(sig),'Pedestrian phase is clear');for(const a of t.cars)for(const b of t.cars)if(a.id<b.id){if(a.road===b.road&&a.dir===b.dir)ok(Math.abs(a.s-b.s)>=99.9,'Following distance');if(a.opacity>.7&&b.opacity>.7&&Traffic.roads.find(r=>r.id===a.road).axis!==Traffic.roads.find(r=>r.id===b.road).axis){const ha=Traffic.roads.find(r=>r.id===a.road).axis==='H'?a:b,va=ha===a?b:a;if(Math.abs(ha.x-va.x)<34&&Math.abs(ha.y-va.y)<34)collisions++;}}}
- ok(modes.has('green')&&modes.has('walk'));eq(collisions,0,'Conflicting lanes do not occupy an intersection');
+ eq(Traffic.loop.points[0][0],Traffic.loop.points.at(-1)[0]);eq(Traffic.loop.points[0][1],Traffic.loop.points.at(-1)[1]);
+ for(let arc=0;arc<Traffic.loop.length;arc+=2)for(const dir of [1,-1]){const p=Traffic.onLoop(arc),x=p.x+p.ty*dir*Traffic.lane,y=p.y-p.tx*dir*Traffic.lane;for(const a of [-23,23])for(const b of [-6.8,6.8])ok(!W.isOnPavement(x+p.tx*a+p.ty*b,y+p.ty*a-p.tx*b),'Car body stays off the pavement');}
+ const t=new Traffic(W.crossings),identities=[...t.cars],headings=t.cars.map(()=>new Set());let modes=new Set();eq(t.cars.length,4,'Quiet town: four cars');
+ function overlaps(a,b){const pa=Traffic.onLoop(a.s),pb=Traffic.onLoop(b.s);for(const axis of [[pa.tx,pa.ty],[pa.ty,-pa.tx],[pb.tx,pb.ty],[pb.ty,-pb.tx]]){const dx=b.x-a.x,dy=b.y-a.y,separation=Math.abs(dx*axis[0]+dy*axis[1]),ra=23*Math.abs(pa.tx*axis[0]+pa.ty*axis[1])+6.8*Math.abs(pa.ty*axis[0]-pa.tx*axis[1]),rb=23*Math.abs(pb.tx*axis[0]+pb.ty*axis[1])+6.8*Math.abs(pb.ty*axis[0]-pb.tx*axis[1]);if(separation>=ra+rb-.1)return false;}return true;}
+ for(let i=0;i<600*60;i++){const previous=t.cars.map(c=>({...c}));t.tick(1/60);modes.add(t.mode);for(const c of t.cars){eq(c,identities[c.id],'Car objects are never respawned');eq(c.opacity,1,'Cars never fade');ok(c.s>=0&&c.s<Traffic.loop.length);ok(Math.hypot(c.x-previous[c.id].x,c.y-previous[c.id].y)<2,'Continuous motion across every seam and turn');const angle=((c.angle%360)+360)%360;headings[c.id].add(Math.round(angle/90)%4);for(const z of t.zones)if(!t.inside(previous[c.id],z)&&t.inside(c,z))eq(t.mode,'green','A car enters a controlled zone only on green');}
+  for(const sig of t.signals)if(sig.phase==='walk')ok(t.clear(sig),'Pedestrian phase is clear');for(const a of t.cars)for(const b of t.cars)if(a.id<b.id){if(a.dir===b.dir)ok(Math.min(Traffic.wrap(a.s-b.s),Traffic.wrap(b.s-a.s))>=99.9,'Following distance on a closed lane');ok(!overlaps(a,b),'Car bodies do not collide, including turns');}
+ }
+ ok(modes.has('green')&&modes.has('walk'));for(const c of t.cars){ok(c.laps>=2,'Every car completes repeated circuits');ok(c.distance>Traffic.loop.length*2);eq(headings[c.id].size,4,'Every car turns through all four headings');}
 }
+
 let generated=0;for(const start of Object.keys(W.nodes))for(const face of W.dirs)for(const serial of [0,3,7,8,10,15]){const t=W.routeTask(start,face,serial);generated++;eq(t.path[0],start);eq(t.path.at(-1),t.target);ok(t.path.length>1);ok(t.path.slice(1).every((id,i)=>W.edge(t.path[i],id)));ok(t.instructions.every(i=>!(/turn around/i.test(i.text))));}
 for(const [text,id] of [['the post office','post'],['bakers','bakery'],['café','cafe'],['police station','police'],['bank','bank'],['I’m at the greengrocer’s','greengrocer']])ok(W.answerMatches(text,id));ok(!W.answerMatches('bank','bakery'));
 for(const f of G.foregrounds){ok(f.points.length>2);for(const [x,y] of f.points)ok(x>=0&&x<=W.W&&y>=0&&y<=W.H);}
 const html=fs.readFileSync('index.html','utf8');ok(html.includes('scene-geometry.js'));ok(html.indexOf('scene-geometry.js')<html.indexOf('draw.js'));ok(html.includes('cole-south.png'));for(const m of W.missions){ok(W.venues[m.target]);ok(m.role&&m.text);}
 console.log(JSON.stringify({status:'passed',checks,venues:W.places.length,crossings:W.crossings.length,authoredWalks:W.walks.length,generatedRoutes:generated,mapSha256:hash('assets/town-map-20261110.webp')}));
+

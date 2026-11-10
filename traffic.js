@@ -1,57 +1,77 @@
-/* Shared car and pedestrian simulation. Australian left-hand lanes. */
+/* Four persistent cars follow both lanes of a continuous town circuit. */
 (function(root){
 'use strict';
+const LANE=7.5,GAP=100;
 const roads=[
- {id:'h1',axis:'H',points:[[153,305],[1290,305]],show:[27,1111]},
- {id:'h2',axis:'H',points:[[100,807],[1325,807]],show:[28,1204]},
- {id:'v2',axis:'V',points:[[940,-80],[940,280],[959,340],[969,550],[977,780],[982,845],[982,1166]],show:[80,1140]},
- {id:'v1-top',axis:'V',points:[[516,-80],[516,305]],show:[100,330]},
- {id:'v1-bottom',axis:'V',points:[[504,807],[502,1166]],show:[65,325]}
+ {id:'h1',axis:'H',points:[[153,305],[1290,305]]},
+ {id:'h2',axis:'H',points:[[100,807],[1325,807]]},
+ {id:'v2',axis:'V',points:[[941,-80],[941,280],[954,344],[962,550],[970,768],[980,845],[982,1166]]},
+ {id:'v1-top',axis:'V',points:[[516,-80],[516,305]]},
+ {id:'v1-bottom',axis:'V',points:[[504,807],[502,1166]]},
+ {id:'west',axis:'V',points:[[158,305],[153,344],[105,768],[101,807]]}
 ].map(r=>{let length=0;const segments=r.points.slice(1).map((p,i)=>{const a=r.points[i],dx=p[0]-a[0],dy=p[1]-a[1],len=Math.hypot(dx,dy),s=length;length+=len;return {a,b:p,s,len,tx:dx/len,ty:dy/len};});return {...r,segments,length};});
 const roadById=Object.fromEntries(roads.map(r=>[r.id,r]));
 function at(road,s){const r=typeof road==='string'?roadById[road]:road,g=r.segments.find(g=>s<=g.s+g.len)||r.segments.at(-1),d=s-g.s;return {x:g.a[0]+g.tx*d,y:g.a[1]+g.ty*d,tx:g.tx,ty:g.ty};}
 function project(road,x,y){const r=typeof road==='string'?roadById[road]:road;let best=Infinity,result=0;for(const g of r.segments){const t=Math.max(0,Math.min(g.len,(x-g.a[0])*g.tx+(y-g.a[1])*g.ty)),p=at(r,g.s+t),d=Math.hypot(p.x-x,p.y-y);if(d<best){best=d;result=g.s+t;}}return result;}
-const junctions=[{x:944,y:305},{x:981,y:807}];
+// Rounded corners stay on asphalt. The seam lies on a straight street.
+const points=[[350,305]];
+const line=(x,y)=>points.push([x,y]);
+function curve(cx,cy,x,y){const [ax,ay]=points.at(-1);for(let i=1;i<=40;i++){const t=i/40,u=1-t;points.push([u*u*ax+2*u*t*cx+t*t*x,u*u*ay+2*u*t*cy+t*t*y]);}}
+line(911,305);curve(950,305,954,344);line(962,550);line(969,768);curve(970.5,807,932.5,807);line(140,807);curve(101,807,105,768);line(153,344);curve(157.4,305,196.4,305);line(350,305);
+const vertices=points.slice(0,-1).map(([x,y],i,ps)=>{const prev=ps[(i+ps.length-1)%ps.length],next=ps[(i+1)%ps.length],a=Math.hypot(x-prev[0],y-prev[1]),b=Math.hypot(next[0]-x,next[1]-y),tx=(x-prev[0])/a+(next[0]-x)/b,ty=(y-prev[1])/a+(next[1]-y)/b,n=Math.hypot(tx,ty);return {x,y,tx:tx/n,ty:ty/n};});
+let length=0;
+const segments=vertices.map((a,i)=>{const b=vertices[(i+1)%vertices.length],len=Math.hypot(b.x-a.x,b.y-a.y),s=length;length+=len;return {a,b,len,s};});
+const wrap=s=>(s%length+length)%length;
+function onLoop(s){s=wrap(s);const g=segments.find(g=>s<g.s+g.len)||segments.at(-1),t=(s-g.s)/g.len,tx=g.a.tx+(g.b.tx-g.a.tx)*t,ty=g.a.ty+(g.b.ty-g.a.ty)*t,n=Math.hypot(tx,ty);return {x:g.a.x+(g.b.x-g.a.x)*t,y:g.a.y+(g.b.y-g.a.y)*t,tx:tx/n,ty:ty/n};}
+function loopProjection(x,y){let best=Infinity,s=0;for(const g of segments){const dx=g.b.x-g.a.x,dy=g.b.y-g.a.y,t=Math.max(0,Math.min(1,((x-g.a.x)*dx+(y-g.a.y)*dy)/(g.len*g.len))),px=g.a.x+dx*t,py=g.a.y+dy*t,d=Math.hypot(px-x,py-y);if(d<best){best=d;s=g.s+g.len*t;}}return {s,distance:best};}
+const axisAt=s=>{const p=onLoop(s);return Math.abs(p.tx)>Math.abs(p.ty)?'H':'V';};
+const junctions=[{x:941,y:316},{x:960,y:797},{x:111,y:797},{x:166,y:315}];
 class Traffic{
- constructor(crossings){this.time=0;this.mode='clear';this.axis='H';this.elapsed=0;this.paused=false;this.requests=new Set();this.signals=crossings.map(c=>({...c,s:project(c.road,c.x,c.y),phase:'green',occupants:new Set()}));this.zones={};for(const r of roads){const controls=this.signals.filter(s=>s.road===r.id).map(s=>({s:s.s,pad:82}));for(const j of junctions){const pos=project(r,j.x,j.y),p=at(r,pos);if(Math.hypot(p.x-j.x,p.y-j.y)<40)controls.push({s:pos,pad:104});}controls.sort((a,b)=>a.s-b.s);const zones=[];for(const c of controls){const last=zones.at(-1);if(last&&c.s-last.max<180){last.max=c.s;last.pad=Math.max(last.pad,c.pad);}else zones.push({min:c.s,max:c.s,pad:c.pad});}this.zones[r.id]=zones;}this.cars=[];let id=0;for(const r of roads)for(const dir of [1,-1])for(let k=0;k<(r.length>500?2:1);k++){const s=(k+.25+(dir===-1?.35:0))*r.length/(r.length>500?2:1);this.cars.push({id:id++,road:r.id,dir,s,speed:0,maxSpeed:58+(id%3)*4,color:['coral','blue','gold','mint'][id%4],type:id%4===0?'van':'car'});}
-  // Seed queues outside controlled boxes, never in a junction at startup.
-  for(const r of roads)for(const dir of [1,-1]){const lane=this.cars.filter(c=>c.road===r.id&&c.dir===dir).sort((a,b)=>dir*(b.s-a.s));let front=null;for(const c of lane){for(const z of this.zones[r.id]){const entry=dir===1?z.min-z.pad:z.max+z.pad,exit=dir===1?z.max+64:z.min-64;if((c.s-entry)*dir>0&&(exit-c.s)*dir>0)c.s=entry;}if(front&&(front.s-c.s)*dir<100)c.s=front.s-dir*100;front=c;}}
-  this.placeCars();this.updateSignals();}
+ constructor(crossings){
+  this.time=0;this.mode='clear';this.axis='H';this.elapsed=0;this.paused=false;this.requests=new Set();
+  this.signals=crossings.map(c=>({...c,s:project(c.road,c.x,c.y),phase:'clear',occupants:new Set()}));
+  this.crossingArcs=new Map();const controls=[];
+  for(const s of this.signals){const p=loopProjection(s.x,s.y);if(p.distance<30){this.crossingArcs.set(s.id,p.s);controls.push({s:p.s,pad:82});}}
+  for(const j of junctions)controls.push({s:loopProjection(j.x,j.y).s,pad:104});
+  controls.sort((a,b)=>a.s-b.s);this.zones=[];
+  for(const c of controls){const last=this.zones.at(-1);if(last&&c.s-last.max<180){last.max=c.s;last.pad=Math.max(last.pad,c.pad);}else this.zones.push({min:c.s,max:c.s,pad:c.pad});}
+  this.cars=[0,.27,.53,.78].map((fraction,id)=>({id,dir:id%2?-1:1,s:fraction*length,speed:0,maxSpeed:50+id*2,color:['coral','blue','gold','mint'][id],type:id===3?'van':'car',distance:0,laps:0,opacity:1}));
+  // Initial cars are parked before red lights, not inside a controlled turn.
+  for(const c of this.cars)for(const z of this.zones)if(this.inside(c,z))c.s=wrap(this.entry(c,z));
+  this.placeCars();this.updateSignals();
+ }
  signal(id){return this.signals.find(s=>s.id===id);}
  request(id){if(this.signal(id))this.requests.add(id);}
- clear(s){return this.paused||!this.cars.some(c=>c.road===s.road&&Math.abs(c.s-s.s)<64);}
+ entry(c,z){return c.dir===1?z.min-z.pad:z.max+z.pad;}
+ exit(c,z){return c.dir===1?z.max+64:z.min-64;}
+ inside(c,z){return (c.s-this.entry(c,z))*c.dir>.001&&(this.exit(c,z)-c.s)*c.dir>0;}
+ clear(s){const arc=this.crossingArcs.get(s.id);return this.paused||arc===undefined||!this.cars.some(c=>Math.min(wrap(c.s-arc),wrap(arc-c.s))<64);}
  canWalk(id){const s=this.signal(id);return !!s&&s.phase==='walk'&&this.clear(s);}
  enter(id,token){if(!this.canWalk(id))return false;this.signal(id).occupants.add(token);return true;}
  leave(id,token){const s=this.signal(id);s?.occupants.delete(token);if(s&&!s.occupants.size)this.requests.delete(id);}
- setEnabled(enabled){if(enabled===!this.paused)return;this.paused=!enabled;if(this.paused){this.mode='walk';this.elapsed=0;}else{this.mode='clear';this.elapsed=0;}this.updateSignals();}
+ setEnabled(enabled){if(enabled===!this.paused)return;this.paused=!enabled;this.mode=this.paused?'walk':'clear';this.elapsed=0;this.updateSignals();}
  updateSignals(){for(const s of this.signals)s.phase=this.paused||this.mode==='walk'?'walk':s.axis===this.axis&&(this.mode==='green'||this.mode==='amber')?this.mode:'clear';}
- junctionsClear(){return !this.cars.some(c=>junctions.some(j=>Math.abs(c.x-j.x)<72&&Math.abs(c.y-j.y)<72));}
- zonesClear(){return !this.cars.some(c=>this.zones[c.road].some(z=>{const entry=c.dir===1?z.min-z.pad:z.max+z.pad,exit=c.dir===1?z.max+64:z.min-64;return (c.s-entry)*c.dir>.001&&(exit-c.s)*c.dir>0;}));}
- placeCars(){for(const c of this.cars){const r=roadById[c.road],p=at(r,c.s),offset=11*c.dir;c.x=p.x+p.ty*offset;c.y=p.y-p.tx*offset;c.angle=Math.atan2(p.ty,p.tx)*180/Math.PI+(c.dir===1?0:180);c.opacity=Math.max(0,Math.min(1,(c.s-r.show[0])/22,(r.show[1]-c.s)/22));}}
+ zonesClear(){return !this.cars.some(c=>this.zones.some(z=>this.inside(c,z)));}
+ placeCars(){for(const c of this.cars){const p=onLoop(c.s),offset=LANE*c.dir;c.x=p.x+p.ty*offset;c.y=p.y-p.tx*offset;c.angle=Math.atan2(p.ty,p.tx)*180/Math.PI+(c.dir===1?0:180);c.road=c.x<180?'west':c.y<345?'h1':c.y>775?'h2':'v2';c.opacity=1;}}
  tick(dt){
   if(dt<=0)return;dt=Math.min(dt,.05);if(this.paused){this.updateSignals();return;}this.time+=dt;this.elapsed+=dt;
   const advance=mode=>{this.mode=mode;this.elapsed=0;};
   if(this.mode==='green'&&this.elapsed>=(this.requests.size?1.2:8))advance('amber');
   else if(this.mode==='amber'&&this.elapsed>=1.3)advance('clear');
-  else if(this.mode==='clear'&&this.elapsed>=.7&&this.signals.every(s=>this.clear(s))&&this.junctionsClear()&&this.zonesClear())advance('walk');
+  else if(this.mode==='clear'&&this.elapsed>=.7&&this.signals.every(s=>this.clear(s))&&this.zonesClear())advance('walk');
   else if(this.mode==='walk'&&this.elapsed>=4&&!this.signals.some(s=>s.occupants.size)){this.requests.clear();advance('clearAfter');}
   else if(this.mode==='clearAfter'&&this.elapsed>=.8){this.axis=this.axis==='H'?'V':'H';advance('green');}
   this.updateSignals();
-  for(const r of roads)for(const dir of [1,-1]){
-   const lane=this.cars.filter(c=>c.road===r.id&&c.dir===dir).sort((a,b)=>dir*(b.s-a.s));
-   for(const c of lane){let allowed=Infinity;
-    const leader=lane.filter(o=>o!==c&&(o.s-c.s)*dir>0).sort((a,b)=>(a.s-b.s)*dir)[0];
-    for(const z of this.zones[r.id]){const stop=dir===1?z.min-z.pad:z.max+z.pad,d=(stop-c.s)*dir,exit=dir===1?z.max+64:z.min-64,exitBlocked=leader&&(leader.s-exit)*dir<100;
-     if(d>=-.001&&(!(r.axis===this.axis&&this.mode==='green')||exitBlocked))allowed=Math.min(allowed,Math.max(0,d));
-    }
-    for(const other of lane)if(other!==c){const d=(other.s-c.s)*dir-100;if(d>=0)allowed=Math.min(allowed,d);}
-    const desired=Math.min(c.maxSpeed,Math.sqrt(Math.max(0,150*allowed)));c.speed=Math.max(0,Math.min(desired,c.speed+(desired>c.speed?95:-160)*dt));const step=Math.min(c.speed*dt,allowed);c.s+=dir*step;if(step<.01)c.speed=0;
-    if(c.s>r.length+70||c.s< -70){const spawn=dir===1?-60:r.length+60;if(!lane.some(o=>o!==c&&Math.abs(o.s-spawn)<120)){c.s=spawn;c.speed=0;}}
+  for(const c of this.cars){let allowed=Infinity;const leaders=this.cars.filter(o=>o!==c&&o.dir===c.dir).map(o=>({car:o,d:wrap((o.s-c.s)*c.dir)})).sort((a,b)=>a.d-b.d),leader=leaders[0];
+   if(leader)allowed=Math.max(0,leader.d-GAP);
+   for(const z of this.zones){const stop=this.entry(c,z),signed=(stop-c.s)*c.dir,d=Math.abs(signed)<.001?0:wrap(signed);if(this.inside(c,z))continue;const exitDistance=(this.exit(c,z)-stop)*c.dir,exitBlocked=leader&&leader.d<d+exitDistance+GAP;
+    if(!(axisAt(stop)===this.axis&&this.mode==='green')||exitBlocked)allowed=Math.min(allowed,d);
    }
+   const desired=Math.min(c.maxSpeed,Math.sqrt(Math.max(0,150*allowed)));c.speed=Math.max(0,Math.min(desired,c.speed+(desired>c.speed?85:-160)*dt));const step=Math.min(c.speed*dt,allowed),next=c.s+c.dir*step;c.distance+=step;if(next>=length||next<0)c.laps++;c.s=wrap(next);if(step<.01)c.speed=0;
   }
   this.placeCars();
  }
 }
-Traffic.roads=roads;Traffic.at=at;Traffic.project=project;Traffic.junctions=junctions;
+Traffic.roads=roads;Traffic.at=at;Traffic.project=project;Traffic.junctions=junctions;Traffic.loop={length,points,segments};Traffic.onLoop=onLoop;Traffic.loopProjection=loopProjection;Traffic.wrap=wrap;Traffic.lane=LANE;
 root.CityTraffic=Traffic;if(typeof module!=='undefined')module.exports=Traffic;
 })(typeof window!=='undefined'?window:globalThis);
