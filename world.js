@@ -50,7 +50,8 @@ connect('rTop','sR',[[1214,340],[1214,274,'h1-east']]);connect('rTop','rBackR',[
 line(['rBackL','bakery','rBackR']);line(['rL','library','rCross','rR']);connect('rBackL','rL',[[1002,600],[1005,690]],['library']);connect('rBackR','rR',[],['library']);
 connect('mBackR','rBackL',[[941,550],[995,550,'courtyard']]);connect('mR','rL',[[943,756],[1007,756,'post-library']]);
 line(['gL','greengrocer','gR']);connect('gL','gN',[[137,980],[145,930],[147,880],[163,860]]);line(['gR','gX','gNE','gN']);
-connect('mCrossW','gN',[[186,768],[186,846,'h2-west']]);
+// Leave the zebra at the garage-side corner so forward keeps following the pavement.
+connect('mL','gN',[[164,776],[186,846,'h2-west']]);
 line(['bL','bus','bR']);line(['bL','bXL','bNW','bN']);connect('bR','bXR');connect('bXR','bN');connect('gX','bXL',[[474,966],[539,966,'bottom-left']]);
 connect('mCrossE','bN',[[915,766],[915,845,'h2-middle']]);
 line(['kL','bank','kR']);connect('kL','kX');connect('kR','kNE');connect('kNE','kN');

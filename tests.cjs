@@ -1,10 +1,14 @@
 /* Run node tests.cjs. These are the same world/simulation modules as the game. */
 const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto');
-const W=require('./world'),Traffic=require('./traffic'),Walker=require('./walker'),G=require('./scene-geometry');let checks=0;
+const W=require('./world'),Traffic=require('./traffic'),Walker=require('./walker'),G=require('./scene-geometry'),R=require('./road-rules');let checks=0;
 const ok=(v,m)=>{assert.ok(v,m);checks++;},eq=(a,b,m)=>{assert.equal(a,b,m);checks++;};
 const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 eq(hash('assets/town-map-20261110.webp'),'f25b92f00c3247f6aa588acd25f365af3fb41c41cf88f8724e9237b68268dbed','Approved map remains intact');
 eq(W.places.length,14);eq(W.crossings.length,12);eq(W.walks.length,8);
+eq(R.signs.length,8);eq(new Set(R.signs.map(r=>r.id)).size,8);
+for(const r of R.signs){ok(W.isOnPavement(r.x,r.y),'Sign pole stands on pavement: '+r.id);ok(['Driver','Pedestrian'].includes(r.role));ok(r.cue&&r.answers.length&&r.note);ok(R.icon(r.symbol).includes('viewBox="0 0 64 64"'));ok(r.answers.every(a=>/^You (can|can't|must|mustn't) /.test(a)),'Every oral model practises a target modal');}
+for(const [id,answer] of [['parking','You can park here.'],['no-parking',"You can't park here."],['straight','You must go straight on.'],['right','You must turn right.'],['no-right',"You mustn't turn right here."],['speed-limit',"You mustn't drive faster than 30 km/h."]])ok(R.signs.find(r=>r.id===id).answers.includes(answer),'Correct meaning of '+id);
+eq(R.signs.find(r=>r.id==='crossing').role,'Pedestrian');ok(R.signs.find(r=>r.id==='crossing').answers.some(a=>a.includes('green')),'The crossing example respects pedestrian signals');
 for(const n of Object.values(W.nodes)){ok(W.isSafeStop(n.id),'Safe ground stop '+n.id);const headings=W.edges[n.id].map(e=>W.direction(n.id,e.to));eq(new Set(headings).size,headings.length,'One clear exit per direction '+n.id);}
 for(const p of W.places){ok(W.shortestPath('bus',p.id),'Reach '+p.id);eq(W.nodes[p.id].x,p.x);eq(W.nodes[p.id].y,p.y);}
 for(const e of W.edgeList)for(const [a,b] of [[e.a,e.b],[e.b,e.a]]){
@@ -14,6 +18,13 @@ for(const e of W.edgeList)for(const [a,b] of [[e.a,e.b],[e.b,e.a]]){
 for(const p of [[420,690],[700,690],[570,700]])ok(!W.isOnPavement(...p),'Joined civic row cannot be crossed');ok(!W.edge('police','cinema'),'No path through connected civic row');
 function simulate(t,w,seconds){for(let i=0;i<seconds*60;i++){t.tick(1/60);w?.tick(1/60);if(w){ok(Number.isFinite(w.x)&&Number.isFinite(w.y));if(w.waiting)ok(W.isOnPavement(w.x,w.y),'Never wait in the road');if(w.held){const sig=t.signal(w.held);eq(sig.phase,'walk');ok(t.clear(sig),'No car on occupied zebra');}else if(w.moving)ok(W.isOnPavement(w.x,w.y),'Unheld movement is pavement');}}}
 // A zebra approach must not block the visible pavement continuing alongside it.
+for(const [start,corner,finish,facing] of [['gN','mL','mBackL','N'],['mBackL','mL','gN','S']]){
+ const t=new Traffic(W.crossings),w=new Walker(W,t);w.reset(start,facing);
+ for(const target of [corner,finish]){eq(W.neighbour(w.location,w.facing),target,'Continue straight between the market and garage-side pavement');ok(w.walk([w.location,target]));simulate(t,w,20);eq(w.location,target);eq(w.facing,facing,'The diagonal zebra keeps Cole facing along the pavement');ok(!w.busy);}
+}
+{
+ const points=[W.nodes.mL,...W.geometry('mL','gN')],i=points.findIndex(p=>p.cross==='h2-west');ok(i>0);ok(points[i].x!==points[i-1].x&&points[i].y!==points[i-1].y,'The controlled zebra is diagonal');eq(W.edge('gN','mL').crossing,'h2-west');ok(!W.edge('gN','mCrossW'),'No sideways detour after crossing');
+}
 for(const [start,corner,turn,finish] of [['gX','gNE',-1,'gN'],['bXL','bNW',1,'bN']]){
  const t=new Traffic(W.crossings),w=new Walker(W,t);w.reset(start,'N');eq(W.neighbour(w.location,w.facing),corner,'Continue north alongside the crossing');ok(w.walk([start,corner]));simulate(t,w,3);eq(w.location,corner);eq(w.facing,'N');ok(w.turn(turn));eq(W.neighbour(w.location,w.facing),finish,'Turn along the rear pavement');ok(w.walk([corner,finish]));simulate(t,w,4);eq(w.location,finish);ok(!w.busy);
 }

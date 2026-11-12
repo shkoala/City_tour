@@ -92,3 +92,19 @@ After task 8, Alex offers additional routes. Changing modes or reloading from an
 | Dad — opposite the library, cash machine | bank |
 
 Teacher studio can reveal names and pavement routes, pause traffic, return Cole to the bus stop, start a fresh lesson and import/export your own messages. Download offline game saves one self-contained HTML file. Read-aloud depends on the voices available on the device.
+
+
+## Road rules: can / can’t / must / mustn’t
+
+Выберите режим Road rules. Нажмите на пронумерованный знак на карте. На телефоне указана роль Driver или Pedestrian и даны слова-подсказки. Ученик сначала произносит правило; Show examples открывает возможные ответы. Next sign и нажатие на другой знак снова скрывают образцы. Read aloud читает первый образец. В этом режиме Коул остаётся на своей позиции; дорожные задания не меняют сюжетные маршруты.
+
+- Parking: You can park here.
+- No parking: You can’t park here. / You mustn’t park here.
+- Speed limit 30: You mustn’t drive faster than 30 km/h.
+- No entry: You can’t drive into this area. / You mustn’t drive into this area.
+- Ahead only: You must go straight on.
+- Turn right: You must turn right.
+- No right turn: You can’t turn right here. / You mustn’t turn right here.
+- Pedestrian crossing: You can cross here when the pedestrian light is green. / You must look both ways before you cross.
+
+Для синих стрелок требуется формулировка обязанности с must. У запрещающих знаков допустимы can’t и mustn’t. Число 30 обозначает максимальную скорость. Устные ответы не получают автоматическую оценку; обсуждайте другие верные формулировки.

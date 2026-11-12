@@ -1,10 +1,10 @@
 (function(){
   'use strict';
-  const W=window.CityWorld,$=id=>document.getElementById(id),asset=path=>window.CITY_ASSETS?.[path]||path;
+  const W=window.CityWorld,R=window.CityRoadRules,$=id=>document.getElementById(id),asset=path=>window.CITY_ASSETS?.[path]||path;
   const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const storeKey='shkoala-city-tour-v4';let saved={};
   try{saved=JSON.parse(localStorage.getItem(storeKey)||'{}')||{};}catch{}
-  const s={mode:'missions',missionIndex:0,chat:false,accepted:false,controls:false,more:false,freeControl:'arrows',paused:false,feedback:'',answer:'',route:null,routeSerial:Number.isSafeInteger(saved.walkIndex)&&saved.walkIndex>=0?saved.walkIndex:0,routeTrail:[],routeSolved:false,completed:new Set(Array.isArray(saved.completed)?saved.completed:[]),routesCompleted:Number.isSafeInteger(saved.routesCompleted)?saved.routesCompleted:0,routeAwards:new Set(Array.isArray(saved.routeAwards)?saved.routeAwards:[]),custom:[],settings:{names:false,paths:false,speech:false,traffic:true,...saved.settings}};
+  const s={mode:'missions',missionIndex:0,chat:false,accepted:false,controls:false,more:false,freeControl:'arrows',ruleIndex:0,ruleRevealed:false,paused:false,feedback:'',answer:'',route:null,routeSerial:Number.isSafeInteger(saved.walkIndex)&&saved.walkIndex>=0?saved.walkIndex:0,routeTrail:[],routeSolved:false,completed:new Set(Array.isArray(saved.completed)?saved.completed:[]),routesCompleted:Number.isSafeInteger(saved.routesCompleted)?saved.routesCompleted:0,routeAwards:new Set(Array.isArray(saved.routeAwards)?saved.routeAwards:[]),custom:[],settings:{names:false,paths:false,speech:false,traffic:true,...saved.settings}};
   const validMessage=m=>m&&typeof m.sender==='string'&&m.sender.trim().length>0&&m.sender.length<=40&&typeof m.text==='string'&&m.text.trim().length>0&&m.text.length<=500&&W.venues[m.target];
   s.custom=(Array.isArray(saved.custom)?saved.custom:[]).filter(validMessage).slice(0,100).map((m,i)=>({sender:m.sender,text:m.text,target:m.target,emoji:'💬',id:typeof m.id==='string'?m.id:'custom-'+i}));
   function persist(){try{localStorage.setItem(storeKey,JSON.stringify({completed:[...s.completed],routesCompleted:s.routesCompleted,custom:s.custom,settings:s.settings,walkIndex:s.routeSerial,routeAwards:[...s.routeAwards]}));}catch{toast('This browser cannot save progress. You can still play and export your messages.');}}
@@ -20,7 +20,7 @@
   const score=()=>s.completed.size+s.routesCompleted;
   const isActive=()=>s.mode==='free'||(s.chat&&s.accepted&&(s.mode!=='directions'||!s.routeSolved));
   const isPaused=()=>s.paused||document.hidden||$('studio').open||$('welcome').open;
-  const messages={missions:['01 / MISSIONS','A message. A little mystery.<br>Find the place and help a friend.'],directions:['02 / FOLLOW DIRECTIONS','Read. Follow. Discover.<br>Where is your friend waiting?'],free:['03 / FREE WALK','Your town. Your own pace.<br>Turn a little walk into a conversation.']};
+  const messages={missions:['01 / MISSIONS','A message. A little mystery.<br>Find the place and help a friend.'],directions:['02 / FOLLOW DIRECTIONS','Read. Follow. Discover.<br>Where is your friend waiting?'],free:['03 / FREE WALK','Your town. Your own pace.<br>Turn a little walk into a conversation.'],rules:['04 / ROAD RULES','Look at a sign. Say a rule.<br>Use can, can’t, must or mustn’t.']};
 
   function onWalker(type,value){
     if(type==='turn'){turnUntil=performance.now()+320;$('cole').classList.remove('turning');void $('cole').offsetWidth;$('cole').classList.add('turning');setTimeout(()=>$('cole').classList.remove('turning'),340);renderLocation();renderControls();}
@@ -43,18 +43,19 @@
   function renderLocation(){
     const n=W.nodes[walker.location],facing={N:'up ↑',E:'right →',S:'down ↓',W:'left ←'}[walker.facing];
     $('position').textContent=walker.waiting?'Waiting on the pavement':walker.busy?'Walking through town':n.place?'Outside '+W.venues[n.place].article:n.kind==='end'?'At the end of the pavement':n.kind==='corner'?'At a pavement corner':n.kind==='crossing'?'At the zebra crossing':'At a pavement junction';
-    $('heading').textContent='Facing '+facing+' · '+(s.mode==='free'&&s.freeControl==='click'?'tap the pavement near a place':isActive()?'turn first, then walk':s.mode==='directions'&&s.routeSolved?'choose Another adventure on the phone':s.mode==='missions'&&missionDone()?'open your next message':'open your message to begin');
+    $('heading').textContent='Facing '+facing+' · '+(s.mode==='rules'?'choose a numbered road sign':s.mode==='free'&&s.freeControl==='click'?'tap the pavement near a place':isActive()?'turn first, then walk':s.mode==='directions'&&s.routeSolved?'choose Another adventure on the phone':s.mode==='missions'&&missionDone()?'open your next message':'open your message to begin');
   }
   function renderModes(){
     document.querySelectorAll('[data-mode]').forEach(b=>{const yes=b.dataset.mode===s.mode;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',String(yes));b.disabled=walker.busy;});
     $('score').innerHTML='★ <b>'+score()+'</b>';$('modeNumber').textContent=messages[s.mode][0];$('modeDescription').innerHTML=messages[s.mode][1];
     document.body.classList.toggle('free-click',s.mode==='free'&&s.freeControl==='click');
     $('walkHint').hidden=!(s.mode==='free'&&s.freeControl==='click');
-    $('map').setAttribute('aria-label','Town map. '+(isActive()?'Arrow keys turn and walk Mr Cole.':'Open a phone message to begin.'));
+    document.body.classList.toggle('road-rules-mode',s.mode==='rules');$('roadSigns').hidden=s.mode!=='rules';if(s.mode==='rules')renderRoadSigns();
+    $('map').setAttribute('aria-label','Town map. '+(s.mode==='rules'?'Select a numbered road sign and say a rule.':isActive()?'Arrow keys turn and walk Mr Cole.':'Open a phone message to begin.'));
   }
   function renderControls(){
     const launch=$('controlLauncher'),active=isActive(),click=s.mode==='free'&&s.freeControl==='click';
-    if(!active||click){s.controls=false;launch.innerHTML=click?'<span class="chat-helper">Click to walk is on</span>':'<span class="chat-helper">Your adventure starts on the phone ↗</span>';}
+    if(!active||click){s.controls=false;launch.innerHTML=s.mode==='rules'?'<span class="chat-helper">Tap a numbered road sign ↗</span>':click?'<span class="chat-helper">Click to walk is on</span>':'<span class="chat-helper">Your adventure starts on the phone ↗</span>';}
     else launch.innerHTML=`<button class="btn launch" data-action="controls" aria-expanded="${s.controls}" aria-controls="controls">${s.controls?'Hide':'Walk controls'} <small>↑ ← →</small><span>${s.controls?'⌄':'⌃'}</span></button>`;
     const el=$('controls');el.hidden=!s.controls||!active||click;
     const next=W.neighbour(walker.location,walker.facing),past=W.pastPath(walker.location,walker.facing),passedPlace=W.pastLandmark(walker.location,walker.facing),cross=next&&W.edge(walker.location,next).crossing;
@@ -79,6 +80,7 @@
   function chatHead(m){return `<div class="chat-head"><button class="back" data-phone="back" aria-label="Back to messages">‹</button>${avatar(m)}<span class="chat-person"><b>${safe(m.sender)}</b><small>${safe(m.role||'a friend in Australia')}</small></span><button class="read-aloud" data-phone="speak" aria-label="Read message aloud" title="Read message aloud">♬</button></div>`;}
   function missionDone(){return s.completed.has(current()?.id);}
   function renderPhone(){
+    if(s.mode==='rules'){renderRules();return;}
     if(s.mode==='free'){renderFree();return;}
     const area=$('phoneArea'),m=s.mode==='missions'?current():s.route;
     const allDone=s.mode==='missions'&&allMissions().every(x=>s.completed.has(x.id));
@@ -103,19 +105,30 @@
   function renderFree(){
     $('phoneArea').innerHTML=inboxHead('No rush. No right answer.')+`<div class="free-screen"><img src="${asset('assets/cole-south.png')}" class="free-cole" alt="Mr Cole"><h3>Let’s take<br>the scenic route.</h3><p>You choose where to go.<br>Listen, speak and explore the town.</p><div class="segmented" role="group" aria-label="Free walk controls"><button data-phone="freeArrows" class="${s.freeControl==='arrows'?'active':''}" aria-pressed="${s.freeControl==='arrows'}">Arrow controls ↑</button><button data-phone="freeClick" class="${s.freeControl==='click'?'active':''}" aria-pressed="${s.freeControl==='click'}">Click to walk ↗</button></div><div class="phrase-card"><button data-phone="phrase" aria-label="Another speaking idea">↻</button><small>A SPEAKING IDEA</small><p>${freePhrases[phrase%freePhrases.length]}</p></div></div>`;
   }
+  function renderRoadSigns(){
+    $('roadSigns').innerHTML=R.signs.map((r,i)=>`<button type="button" class="road-sign-marker ${i===s.ruleIndex?'selected':''}" data-rule-index="${i}" aria-label="Sign ${i+1}: ${safe(r.name)}" aria-pressed="${i===s.ruleIndex}" title="${safe(r.name)}" style="left:${r.x/W.W*100}%;top:${r.y/W.H*100}%"><span class="sign-base"></span><span class="sign-post"></span><span class="sign-face">${R.icon(r.symbol)}</span><span class="sign-number">${i+1}</span></button>`).join('');
+  }
+  function renderRules(){
+    const r=R.signs[s.ruleIndex];
+    $('phoneArea').innerHTML=`<div class="phone-head"><div><h2>Road rules</h2><small>Tap a sign. Say a sentence.</small></div><span class="rule-count">${s.ruleIndex+1} / ${R.signs.length}</span></div><div class="rules-scroll"><div class="rule-role">YOU ARE A ${r.role.toUpperCase()}</div><div class="rule-picture" role="img" aria-label="${safe(r.name)}">${R.icon(r.symbol)}</div><h3>What does this sign mean?</h3><p class="rule-cue">${safe(r.cue)}</p><div class="modal-bank" aria-label="Choose a modal verb"><span>can</span><span>can’t</span><span>must</span><span>mustn’t</span></div>${s.ruleRevealed?`<div class="rule-example" role="status"><small>EXAMPLES</small>${r.answers.map(a=>`<p>${safe(a)}</p>`).join('')}<div class="rule-note">${safe(r.note)}</div><button class="rule-speak" data-phone="speakRule" aria-label="Read the first example aloud">Read aloud</button></div>`:'<p class="rule-tip">Say your rule first. Then open the examples.</p>'}</div><div class="chat-composer"><button class="phone-btn solid" data-phone="ruleReveal" aria-expanded="${s.ruleRevealed}">${s.ruleRevealed?'Hide examples':'Show examples'}</button><div class="rule-navigation"><button class="phone-btn" data-phone="rulePrevious">Previous sign</button><button class="phone-btn" data-phone="ruleNext">Next sign</button></div></div>`;
+  }
+  function selectRule(index){s.ruleIndex=(index+R.signs.length)%R.signs.length;s.ruleRevealed=false;window.speechSynthesis?.cancel();renderRoadSigns();renderRules();$('announcer').textContent='Sign '+(s.ruleIndex+1)+'. You are a '+R.signs[s.ruleIndex].role.toLowerCase()+'. Say a rule.';}
   function routePrefix(){if(!s.route)return 0;let i=0;while(i<s.routeTrail.length&&s.routeTrail[i]===s.route.path[i])i++;return Math.max(0,i-1);}
   function routeOff(){return s.routeTrail.some((id,i)=>id!==s.route?.path[i]);}
   function newRoute(){s.route=W.routeTask(walker.location,walker.facing,s.routeSerial);s.routeTrail=[walker.location];s.routeSolved=false;s.accepted=false;s.chat=false;s.answer='';s.feedback='';}
   function switchMode(mode){
     if(walker.busy){toast('Let Mr Cole finish this short walk first.');return;}
     s.mode=mode;s.chat=false;s.accepted=false;s.controls=false;s.more=false;s.feedback='';window.speechSynthesis?.cancel();
-    if(mode==='directions')newRoute();if(mode==='missions')selectMission();renderModes();renderPhone();renderControls();renderLocation();
+    if(mode==='directions')newRoute();if(mode==='missions')selectMission();if(mode==='rules')s.ruleRevealed=false;renderModes();renderPhone();renderControls();renderLocation();
   }
   function say(text){
     if(!('speechSynthesis' in window)){toast('Read-aloud is not available in this browser.');return;}
     window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-AU';u.rate=.88;const voices=window.speechSynthesis.getVoices();const voice=voices.find(v=>v.lang==='en-AU')||voices.find(v=>v.lang==='en-GB')||voices.find(v=>/^en/.test(v.lang));if(voice)u.voice=voice;window.speechSynthesis.speak(u);
   }
   function phoneAction(action,el){
+    if(action==='ruleReveal'&&s.mode==='rules'){s.ruleRevealed=!s.ruleRevealed;renderRules();return;}
+    if((action==='rulePrevious'||action==='ruleNext')&&s.mode==='rules'){selectRule(s.ruleIndex+(action==='ruleNext'?1:-1));return;}
+    if(action==='speakRule'&&s.mode==='rules'){if(s.ruleRevealed)say(R.signs[s.ruleIndex].answers[0]);return;}
     if(action==='speak'){const t=s.mode==='missions'?current():s.route;say(t.text+(s.mode==='directions'?' '+t.instructions.map(i=>i.text).join(' '):''));return;}
     if(action==='explore'){switchMode('free');return;}
     if(action==='back'){s.chat=false;s.controls=false;renderPhone();renderControls();return;}
@@ -147,7 +160,7 @@
     renderPhone();renderControls();renderLocation();
   }
   function resetLesson(){
-    s.completed.clear();s.routeAwards.clear();s.routesCompleted=0;s.routeSerial=0;s.missionIndex=0;s.chat=false;s.accepted=false;s.controls=false;s.feedback='';walker.reset('bus','S');if(s.mode==='directions')newRoute();persist();renderAll();toast('A fresh lesson. Mr Cole is back at the bus stop.');
+    s.ruleIndex=0;s.ruleRevealed=false;s.completed.clear();s.routeAwards.clear();s.routesCompleted=0;s.routeSerial=0;s.missionIndex=0;s.chat=false;s.accepted=false;s.controls=false;s.feedback='';walker.reset('bus','S');if(s.mode==='directions')newRoute();persist();renderAll();toast('A fresh lesson. Mr Cole is back at the bus stop.');
   }
   function renderAll(){renderModes();renderPhone();renderControls();renderLocation();}
   function setPaused(value){s.paused=value;$('pauseCover').hidden=!value;$('pause').textContent=value?'▷':'Ⅱ';$('pause').setAttribute('aria-label',value?'Resume game':'Pause game');renderControls();window.speechSynthesis?.cancel();}
@@ -189,7 +202,8 @@
   $('phoneArea').addEventListener('click',e=>{const b=e.target.closest('[data-phone]');if(b)phoneAction(b.dataset.phone,b);});
   $('phoneArea').addEventListener('submit',e=>{if(e.target.id==='answerForm'){e.preventDefault();checkAnswer();}});
   $('phoneArea').addEventListener('input',e=>{if(e.target.id==='answer')s.answer=e.target.value;});
-  $('spots').addEventListener('click',e=>{const b=e.target.closest('[data-place]');if(!b)return;toast(s.mode==='free'?'That is '+W.venues[b.dataset.place].article+'. Tap the pavement in front of it to walk there.':'Help Cole walk to a place, then reply on the phone.');});
+  $('roadSigns').addEventListener('click',e=>{const b=e.target.closest('[data-rule-index]');if(b&&s.mode==='rules')selectRule(Number(b.dataset.ruleIndex));});
+  $('spots').addEventListener('click',e=>{const b=e.target.closest('[data-place]');if(!b)return;if(s.mode==='rules'){toast('Tap one of the numbered road signs.');return;}toast(s.mode==='free'?'That is '+W.venues[b.dataset.place].article+'. Tap the pavement in front of it to walk there.':'Help Cole walk to a place, then reply on the phone.');});
   $('map').addEventListener('click',e=>{
     if(s.mode!=='free'||s.freeControl!=='click'||!canAct()||e.target.closest('.place-spot,.controls'))return;
     const r=$('map').getBoundingClientRect(),id=nearestWalkPoint((e.clientX-r.left)/r.width*W.W,(e.clientY-r.top)/r.height*W.H);
@@ -230,7 +244,7 @@
   function updateClock(){const now=new Date();$('clock').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}updateClock();setInterval(updateClock,30000);
   applySettings();renderAll();requestAnimationFrame(tick);
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
-  window.cityMessages={getState:()=>({version:'20261112-pavement-links',mode:s.mode,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
+  window.cityMessages={getState:()=>({version:'20261112-road-rules',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
 
 

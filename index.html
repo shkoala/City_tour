@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-navigation-version="20261112-pavement-links">
+<html lang="en" data-navigation-version="20261112-road-rules">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,7 +7,7 @@
   <meta name="description" content="City_tour: explore Mr Cole’s town. Read messages, follow English directions and find your way.">
   <title>City_tour · ШКОАЛА</title>
   <link rel="icon" href="assets/cole-south.png">
-  <link rel="stylesheet" href="style.css?v=20261112-pavement-links">
+  <link rel="stylesheet" href="style.css?v=20261112-road-rules">
   <link rel="preload" as="image" href="assets/town-map-20261110.webp">
 </head>
 <body>
@@ -18,6 +18,7 @@
         <button class="mode active" data-mode="missions" aria-pressed="true"><span>01</span> Missions</button>
         <button class="mode" data-mode="directions" aria-pressed="false"><span>02</span> Follow directions</button>
         <button class="mode" data-mode="free" aria-pressed="false"><span>03</span> Free walk</button>
+        <button class="mode" data-mode="rules" aria-pressed="false"><span>04</span> Road rules</button>
       </nav>
       <div class="header-tools"><span class="score" id="score">★ <b>0</b></span><button class="icon-btn" id="pause" aria-label="Pause game" title="Pause game">Ⅱ</button><button class="icon-btn" id="fullscreen" aria-label="Full screen" title="Full screen">⛶</button><button class="icon-btn" id="settings" aria-label="Teacher studio" title="Teacher studio">⚙</button></div>
     </header>
@@ -31,6 +32,7 @@
           <div id="trafficLayer" class="traffic-layer" aria-hidden="true"></div>
           <div id="occlusionLayer" aria-hidden="true"></div>
           <div id="signalLayer" class="signal-layer" aria-hidden="true"></div>
+          <div id="roadSigns" class="road-sign-layer" aria-label="Road signs for speaking practice" hidden></div>
           <div id="cole" class="cole" style="left:49.724%;top:94.383%" data-facing="S" role="img" aria-label="Mr Cole"><div class="cole-shadow"></div><img id="coleSprite" src="assets/cole-south.png" alt="" draggable="false"><span class="cole-wait" id="coleWait">Wait for green</span></div>
           <div class="pause-cover" id="pauseCover" hidden><span>Ⅱ</span><b>A little pause.</b><button id="resume" class="btn primary">Continue exploring</button></div>
           <div id="walkHint" class="walk-hint" hidden>Tap the pavement to walk</div>
@@ -61,7 +63,8 @@
     </div>
     <div class="studio-page guide" data-page="guide" hidden>
       <h3>A visit to Australia</h3><p>Mr Cole is a teacher in Russia. He is visiting his family in Australia. Help him find his way, meet friends and send a postcard to Russia.</p>
-      <h3>Three ways to play</h3><p><b>Missions.</b> Open a message and tap <i>On my way!</i>. Work out the destination. Walk to the entrance and reply <i>I’m here!</i>. Some messages are errands; others use behind, in front of, next to, opposite and between.</p><p><b>Follow directions.</b> Alex sends two connected story walks. Follow the route, then write the meeting place. The game checks both the route and the answer. Each new task starts where Cole finished the previous one. If you take a wrong turn, retrace your steps or choose <i>Restart route</i>.</p><p><b>Free walk.</b> Use arrow controls or <i>Click to walk</i>. In click mode, tap the pavement near an entrance; Cole follows a safe path. Give your partner spoken directions.</p>
+      <h3>Four ways to play</h3><p><b>Missions.</b> Open a message and tap <i>On my way!</i>. Work out the destination. Walk to the entrance and reply <i>I’m here!</i>. Some messages are errands; others use behind, in front of, next to, opposite and between.</p><p><b>Follow directions.</b> Alex sends two connected story walks. Follow the route, then write the meeting place. The game checks both the route and the answer. Each new task starts where Cole finished the previous one. If you take a wrong turn, retrace your steps or choose <i>Restart route</i>.</p><p><b>Free walk.</b> Use arrow controls or <i>Click to walk</i>. In click mode, tap the pavement near an entrance; Cole follows a safe path. Give your partner spoken directions.</p>
+      <p><b>Road rules.</b> Tap a numbered sign on the map. Imagine you are the driver or pedestrian shown on the phone. Say a rule with <i>can, can’t, must</i> or <i>mustn’t</i>, then open <i>Show examples</i>. Signs appear in this mode; Mr Cole keeps his walking position.</p>
       <h3>Turn first, then walk</h3><p><b>↑</b> go straight on. <b>← / →</b> turn left / right relative to Cole. <b>↓</b> turn around. The arrow in the location bar shows his view. At the beginning Cole stands in front of the bus stop, facing down, away from the shelter.</p><p><i>Walk controls</i> opens the buttons. They fold away when he walks. <i>More</i> shows <b>Go past…</b> when a landmark can be passed. <b>Esc</b> folds the controls away. One forward action takes him to the next entrance, crossing approach or pavement junction. Continue straight through a junction when the message says to do so.</p>
       <h3>Roads and crossings</h3><p>Cole stays on the pavement and uses the marked zebras. He waits on the pavement for the pedestrian green. Cars slow down for amber and stop for red; a car already beyond its stop line clears the crossing first. The lights stay red until Cole has finished crossing. The garage, police station and post office are joined: reach the courtyard by walking around the whole row.</p><p>Use <i>Moving traffic</i> to run a quieter lesson. The pause button, hidden browser tab and open settings stop the simulation. Progress, settings and custom messages stay on this device. Export your messages to move them to another device.</p>
     </div>
@@ -69,8 +72,8 @@
   <dialog id="welcome" class="welcome"><button class="icon-btn close-dialog" aria-label="Close help">×</button><span class="eyebrow">YOUR TOWN IS WAITING</span><h2>Small messages.<br>Big adventures.</h2><div class="welcome-content"><img src="assets/cole-south.png" alt="Mr Cole in his mint cardigan"><div><p>Mr Cole is a teacher in Russia.<br>He is visiting his family in Australia.</p><p>Read a message. Follow the clues.<br>Help him find his way.</p><p>Turn with <kbd>←</kbd> <kbd>→</kbd><br>Walk with <kbd>↑</kbd><br>Turn around with <kbd>↓</kbd></p><small>Left and right are always Mr Cole’s.</small></div></div><button id="welcomeGo" class="btn primary">Let’s explore <span>→</span></button></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div class="sr-only" id="announcer" aria-live="polite"></div>
-  <script src="world.js?v=20261112-pavement-links"></script><script src="traffic.js?v=20261112-pavement-links"></script><script src="walker.js?v=20261112-pavement-links"></script><script src="scene-geometry.js?v=20261112-pavement-links"></script><script src="scene.js?v=20261112-pavement-links"></script>
-<script src="draw.js?v=20261112-pavement-links"></script><script src="app.js?v=20261112-pavement-links"></script>
+  <script src="world.js?v=20261112-road-rules"></script><script src="road-rules.js?v=20261112-road-rules"></script><script src="traffic.js?v=20261112-road-rules"></script><script src="walker.js?v=20261112-road-rules"></script><script src="scene-geometry.js?v=20261112-road-rules"></script><script src="scene.js?v=20261112-road-rules"></script>
+<script src="draw.js?v=20261112-road-rules"></script><script src="app.js?v=20261112-road-rules"></script>
 </body>
 </html>
 

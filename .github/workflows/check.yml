@@ -14,6 +14,7 @@ jobs:
           node --check scene.js
           node --check draw.js
           node --check world.js
+          node --check road-rules.js
           node --check traffic.js
           node --check walker.js
       - name: Verify map, crossings, traffic and routes

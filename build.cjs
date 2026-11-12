@@ -1,6 +1,6 @@
 /* Build the static preview and the portable offline edition. No dependencies. */
 const fs=require('node:fs'),path=require('node:path');
-const scripts=['world.js','traffic.js','walker.js','scene-geometry.js','scene.js','draw.js','app.js'];
+const scripts=['world.js','road-rules.js','traffic.js','walker.js','scene-geometry.js','scene.js','draw.js','app.js'];
 const assets=['town-map-20261110.webp','shkoala-logo.png',...['north','south','east','west','diagonal','diagonal_back'].map(n=>'cole-'+n+'.png')];
 fs.mkdirSync('dist/assets',{recursive:true});
 for(const file of ['index.html','style.css',...scripts])fs.copyFileSync(file,'dist/'+file);
