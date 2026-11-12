@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-navigation-version="20261112-sign-context">
+<html lang="en" data-navigation-version="20261113-sign-positions">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -300,10 +300,10 @@ if(typeof module!=='undefined')module.exports=root.CityWorld;
 'use strict';
 const signs=[
  {id:'parking',symbol:'parking',name:'Parking',x:480,y:88,role:'Driver',context:'At the car park behind the hospital.',cue:'park here',answers:['You can park here.'],note:'Use the marked parking spaces behind the hospital.',area:'hospital-parking'},
- {id:'no-parking',symbol:'no-parking',name:'No parking',x:168,y:755,role:'Driver',context:'On the road beside the garage.',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Keep the road beside the yellow kerb clear.',area:'garage-kerb'},
+ {id:'no-parking',symbol:'no-parking',name:'No parking',x:1284,y:530,role:'Driver',context:'On the road beside the tram.',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Keep the road beside the tram tracks and the yellow kerb clear.',area:'tram-kerb'},
  {id:'speed-limit',symbol:'speed-limit',name:'Speed limit: 30',x:1006,y:266,role:'Driver',context:'On the road beside the school.',cue:'drive faster than 30 km/h',answers:["You mustn't drive faster than 30 km/h.","You can't drive faster than 30 km/h."],note:'30 km/h is the maximum speed.'},
  {id:'no-entry',symbol:'no-entry',name:'No entry',x:1238,y:99,role:'Driver',context:'At the path behind the school.',cue:'drive into this area',answers:["You can't drive into this area.","You mustn't drive into this area."],note:'The path behind the school is for pedestrians. Bollards keep vehicles out.',area:'school-footpath'},
- {id:'straight',symbol:'straight',name:'Ahead only',x:1026,y:851,role:'Driver',context:'Drive up the road beside the bank.',cue:'go straight on',answers:['You must go straight on.'],note:'At this junction, continue up the road beside the library.',approach:{route:'central',dir:-1,point:[980,807],movement:'straight'}},
+ {id:'straight',symbol:'straight',name:'Ahead only',x:168,y:755,role:'Driver',context:'Drive up the road beside the garage.',cue:'go straight on',answers:['You must go straight on.'],note:'Continue straight on beside the garage and the theatre.',approach:{route:'west',dir:-1,point:[136,550],movement:'straight'}},
  {id:'right',symbol:'right',name:'Turn right',x:550,y:230,role:'Driver',context:'Drive down the road beside the hospital.',cue:'turn right',answers:['You must turn right.'],note:'At the end of this road, turn right and follow the road beside the hospital.',approach:{route:'west',dir:1,point:[516,305],movement:'right'}},
  {id:'no-right',symbol:'no-right',name:'No right turn',x:976,y:127,role:'Driver',context:'Drive up the road beside the school.',cue:'turn right',answers:["You can't turn right here.","You mustn't turn right here."],note:'The path on your right is a pavement, protected by bollards. Cars continue straight on.',area:'school-footpath',approach:{route:'central',dir:-1,point:[934,55],movement:'no-right'}},
  {id:'crossing',symbol:'crossing',name:'Pedestrian crossing',x:562,y:970,role:'Pedestrian',context:'Beside the bus stop.',cue:'cross here / look both ways',answers:['You can cross here when the pedestrian light is green.','You must look both ways before you cross.'],note:'Use the zebra crossing and wait for the green pedestrian light.'}
@@ -485,7 +485,7 @@ const northRoads=[
 const parking={id:'hospital-parking',surface:[[212,-2],[486,-2],[486,26],[496,26],[496,69],[486,69],[486,73],[212,73]],bays:[222,286,350,414,478],parked:[{x:254,y:20,color:'blue'},{x:318,y:20,color:'coral'},{x:446,y:20,color:'mint'}]};
 roadSurfaces.push(parking.surface);
 const schoolFootpath={id:'school-footpath',from:[961,55],to:[1253,55],bollards:[[975,49],[975,72],[1239,49],[1239,72]]};
-const noParkingKerb={id:'garage-kerb',points:[[140,685],[135,720],[129,760]]};
+const noParkingKerb={id:'tram-kerb',points:[[1279,440],[1285,485],[1290,530]]};
 function onAsphalt(x,y){return roadSurfaces.some(poly=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [ax,ay]=poly[i],[bx,by]=poly[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;});}
 const bankCurrency={symbol:'£',x:1162,y:866,r:24};
 root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,parking,schoolFootpath,noParkingKerb,onAsphalt};
@@ -782,7 +782,7 @@ root.CityDraw={setup,update,car};
   function updateClock(){const now=new Date();$('clock').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}updateClock();setInterval(updateClock,30000);
   applySettings();renderAll();requestAnimationFrame(tick);
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
-  window.cityMessages={getState:()=>({version:'20261112-sign-context',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
+  window.cityMessages={getState:()=>({version:'20261113-sign-positions',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
 
 

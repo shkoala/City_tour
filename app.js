@@ -244,7 +244,7 @@
   function updateClock(){const now=new Date();$('clock').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}updateClock();setInterval(updateClock,30000);
   applySettings();renderAll();requestAnimationFrame(tick);
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
-  window.cityMessages={getState:()=>({version:'20261112-sign-context',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
+  window.cityMessages={getState:()=>({version:'20261113-sign-positions',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
 
 

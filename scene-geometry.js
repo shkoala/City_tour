@@ -43,7 +43,7 @@ const northRoads=[
 const parking={id:'hospital-parking',surface:[[212,-2],[486,-2],[486,26],[496,26],[496,69],[486,69],[486,73],[212,73]],bays:[222,286,350,414,478],parked:[{x:254,y:20,color:'blue'},{x:318,y:20,color:'coral'},{x:446,y:20,color:'mint'}]};
 roadSurfaces.push(parking.surface);
 const schoolFootpath={id:'school-footpath',from:[961,55],to:[1253,55],bollards:[[975,49],[975,72],[1239,49],[1239,72]]};
-const noParkingKerb={id:'garage-kerb',points:[[140,685],[135,720],[129,760]]};
+const noParkingKerb={id:'tram-kerb',points:[[1279,440],[1285,485],[1290,530]]};
 function onAsphalt(x,y){return roadSurfaces.some(poly=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [ax,ay]=poly[i],[bx,by]=poly[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;});}
 const bankCurrency={symbol:'£',x:1162,y:866,r:24};
 root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,parking,schoolFootpath,noParkingKerb,onAsphalt};
