@@ -9,6 +9,18 @@ eq(R.signs.length,8);eq(new Set(R.signs.map(r=>r.id)).size,8);
 for(const r of R.signs){ok(W.isOnPavement(r.x,r.y),'Sign pole stands on pavement: '+r.id);ok(['Driver','Pedestrian'].includes(r.role));ok(r.cue&&r.answers.length&&r.note);ok(R.icon(r.symbol).includes('viewBox="0 0 64 64"'));ok(r.answers.every(a=>/^You (can|can't|must|mustn't) /.test(a)),'Every oral model practises a target modal');}
 for(const [id,answer] of [['parking','You can park here.'],['no-parking',"You can't park here."],['straight','You must go straight on.'],['right','You must turn right.'],['no-right',"You mustn't turn right here."],['speed-limit',"You mustn't drive faster than 30 km/h."]])ok(R.signs.find(r=>r.id===id).answers.includes(answer),'Correct meaning of '+id);
 eq(R.signs.find(r=>r.id==='crossing').role,'Pedestrian');ok(R.signs.find(r=>r.id==='crossing').answers.some(a=>a.includes('green')),'The crossing example respects pedestrian signals');
+// Sign meanings must match the actual driving paths and the ground they describe.
+for(const r of R.signs.filter(r=>r.approach)){
+ const a=r.approach,arc=Traffic.routeProjection(a.route,...a.point).s,before=Traffic.onRoute(a.route,arc-a.dir*90),after=Traffic.onRoute(a.route,arc+a.dir*90);
+ const cross=before.tx*after.ty-before.ty*after.tx,dot=before.tx*after.tx+before.ty*after.ty;
+ if(a.movement==='right')ok(cross>.9&&Math.abs(dot)<.2,'Cars make the mandatory right turn: '+r.id);
+ else ok(dot>.95&&Math.abs(cross)<.15,'Cars continue straight at '+r.id);
+ const signArc=Traffic.routeProjection(a.route,r.x,r.y).s;ok((arc-signArc)*a.dir>15,'The sign is before the manoeuvre: '+r.id);
+}
+for(const c of G.parking.parked)for(const dx of [-12,12])for(const dy of [-20,20])ok(G.onAsphalt(c.x+dx,c.y+dy),'Parked cars fit inside the car park');
+for(let x=478;x<=505;x+=2)for(let y=32;y<=62;y+=5)ok(G.onAsphalt(x,y),'The parking entrance connects to the road');
+const schoolPath=G.schoolFootpath;ok(schoolPath.bollards.length>=4,'The pedestrian entrances are physically protected');
+for(const route of Traffic.routes)for(let arc=0;arc<route.length;arc+=4)for(const dir of [1,-1]){const c=Traffic.poseOnRoute(route,arc,dir);if(c.y>=40&&c.y<=73)ok(c.x<schoolPath.from[0]||c.x>schoolPath.to[0],'Cars never enter the school footpath');}
 for(const n of Object.values(W.nodes)){ok(W.isSafeStop(n.id),'Safe ground stop '+n.id);const headings=W.edges[n.id].map(e=>W.direction(n.id,e.to));eq(new Set(headings).size,headings.length,'One clear exit per direction '+n.id);}
 for(const p of W.places){ok(W.shortestPath('bus',p.id),'Reach '+p.id);eq(W.nodes[p.id].x,p.x);eq(W.nodes[p.id].y,p.y);}
 for(const e of W.edgeList)for(const [a,b] of [[e.a,e.b],[e.b,e.a]]){

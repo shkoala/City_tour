@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-navigation-version="20261112-road-rules">
+<html lang="en" data-navigation-version="20261112-sign-context">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -60,20 +60,20 @@
 /* Road rules: sign pictures and oral prompts appear only in their own mode. */
 .road-sign-layer{position:absolute;inset:0;z-index:19000;pointer-events:none}
 .road-sign-layer[hidden]{display:none!important}
-.road-sign-marker{position:absolute;width:4.2%;min-width:32px;aspect-ratio:.73;transform:translate(-50%,-100%);border:0;background:none;padding:0;pointer-events:auto;cursor:pointer;isolation:isolate;filter:drop-shadow(1px 2px 1px #20352b44)}
+.road-sign-marker{position:absolute;width:3.6%;min-width:26px;aspect-ratio:.73;transform:translate(-50%,-100%);border:0;background:none;padding:0;pointer-events:auto;cursor:pointer;isolation:isolate;filter:drop-shadow(1px 2px 1px #20352b44)}
 .sign-face{position:absolute;inset:0 0 27%;display:grid;place-items:center;border-radius:50%;transition:transform .15s}
 .sign-face svg{width:100%;height:100%;overflow:visible}
 .sign-post{position:absolute;left:46%;width:8%;top:45%;bottom:3%;background:linear-gradient(90deg,#83938c,#455d53);border-radius:2px;z-index:-1}
 .sign-base{position:absolute;left:33%;bottom:0;width:34%;height:5%;background:#4a6157;border-radius:50%;z-index:-1}
-.sign-number{position:absolute;right:-3px;top:-4px;background:#fffdf3;color:#355b49;border:1px solid #78977b;border-radius:50%;min-width:17px;height:17px;display:grid;place-items:center;font:700 10px system-ui;box-shadow:0 1px 3px #20352b33}
 .road-sign-marker:hover .sign-face,.road-sign-marker.selected .sign-face{transform:scale(1.13)}
 .road-sign-marker.selected:before{content:'';position:absolute;inset:-7px -7px 17%;border:2px solid #e4ac55;border-radius:50%;background:#fff6d522;z-index:-2}
 .road-sign-marker:focus-visible{outline:3px solid #365c8e;outline-offset:6px;border-radius:12px}
-.rules-scroll{flex:1;min-height:0;overflow:auto;padding:15px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.rules-scroll{flex:1;min-height:0;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .rule-role{font:700 9px system-ui;letter-spacing:1.2px;color:#7f9373;background:#edf2e3;padding:7px 11px;border-radius:20px}
-.rule-picture{width:112px;min-height:112px;display:grid;place-items:center;margin:2px 0;filter:drop-shadow(0 4px 1px #263f3922)}
+.rule-picture{width:100px;min-height:100px;display:grid;place-items:center;margin:2px 0;filter:drop-shadow(0 4px 1px #263f3922)}
 .rule-picture svg{width:100%;height:100%}
 .rules-scroll h3{font:650 19px/1.25 system-ui;margin:0;color:#304e40;letter-spacing:-.3px}
+.rule-context{margin:0;max-width:230px;font-size:11px;line-height:1.5;color:#7b8c70}
 .rule-cue{margin:0;font-size:14px;line-height:1.5;color:#6b7f61}
 .modal-bank{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin:3px 0}
 .modal-bank span{background:#e9e8f4;color:#665981;border-radius:8px;padding:6px 8px;font:650 12px system-ui}
@@ -87,7 +87,7 @@
 .rule-navigation{display:flex;gap:7px}.rule-navigation .phone-btn{flex:1;justify-content:center;font-size:10px;min-height:33px;padding:7px 4px}
 .phone-head .rule-count{font:650 11px system-ui;color:#6e8762;background:#eaf0e1;padding:6px 8px;border-radius:9px;white-space:nowrap}
 @media(max-width:1150px){.mode{padding-inline:8px}.modes{gap:1px}.rule-picture{width:94px;min-height:94px}.rules-scroll{padding:11px 14px;gap:8px}.rules-scroll h3{font-size:17px}}
-@media(max-width:700px){.road-sign-marker{min-width:25px}.sign-number{height:14px;min-width:14px;font-size:8px;right:-2px;top:-2px}.mode{font-size:10px}.modal-bank span{padding:6px 7px}.rule-picture{width:100px;min-height:100px}}
+@media(max-width:700px){.road-sign-marker{min-width:25px}.mode{font-size:10px}.modal-bank span{padding:6px 7px}.rule-picture{width:100px;min-height:100px}}
 </style>
   
 </head>
@@ -145,7 +145,7 @@
     <div class="studio-page guide" data-page="guide" hidden>
       <h3>A visit to Australia</h3><p>Mr Cole is a teacher in Russia. He is visiting his family in Australia. Help him find his way, meet friends and send a postcard to Russia.</p>
       <h3>Four ways to play</h3><p><b>Missions.</b> Open a message and tap <i>On my way!</i>. Work out the destination. Walk to the entrance and reply <i>I’m here!</i>. Some messages are errands; others use behind, in front of, next to, opposite and between.</p><p><b>Follow directions.</b> Alex sends two connected story walks. Follow the route, then write the meeting place. The game checks both the route and the answer. Each new task starts where Cole finished the previous one. If you take a wrong turn, retrace your steps or choose <i>Restart route</i>.</p><p><b>Free walk.</b> Use arrow controls or <i>Click to walk</i>. In click mode, tap the pavement near an entrance; Cole follows a safe path. Give your partner spoken directions.</p>
-      <p><b>Road rules.</b> Tap a numbered sign on the map. Imagine you are the driver or pedestrian shown on the phone. Say a rule with <i>can, can’t, must</i> or <i>mustn’t</i>, then open <i>Show examples</i>. Signs appear in this mode; Mr Cole keeps his walking position.</p>
+      <p><b>Road rules.</b> Tap a sign on the map. Imagine you are the driver or pedestrian shown on the phone. Say a rule with <i>can, can’t, must</i> or <i>mustn’t</i>, then open <i>Show examples</i>. Signs appear in this mode; Mr Cole keeps his walking position.</p>
       <h3>Turn first, then walk</h3><p><b>↑</b> go straight on. <b>← / →</b> turn left / right relative to Cole. <b>↓</b> turn around. The arrow in the location bar shows his view. At the beginning Cole stands in front of the bus stop, facing down, away from the shelter.</p><p><i>Walk controls</i> opens the buttons. They fold away when he walks. <i>More</i> shows <b>Go past…</b> when a landmark can be passed. <b>Esc</b> folds the controls away. One forward action takes him to the next entrance, crossing approach or pavement junction. Continue straight through a junction when the message says to do so.</p>
       <h3>Roads and crossings</h3><p>Cole stays on the pavement and uses the marked zebras. He waits on the pavement for the pedestrian green. Cars slow down for amber and stop for red; a car already beyond its stop line clears the crossing first. The lights stay red until Cole has finished crossing. The garage, police station and post office are joined: reach the courtyard by walking around the whole row.</p><p>Use <i>Moving traffic</i> to run a quieter lesson. The pause button, hidden browser tab and open settings stop the simulation. Progress, settings and custom messages stay on this device. Export your messages to move them to another device.</p>
     </div>
@@ -299,14 +299,14 @@ if(typeof module!=='undefined')module.exports=root.CityWorld;
 (function(root){
 'use strict';
 const signs=[
- {id:'parking',symbol:'parking',name:'Parking',x:1310,y:1020,role:'Driver',cue:'park here',answers:['You can park here.'],note:'Parking is allowed here.'},
- {id:'no-parking',symbol:'no-parking',name:'No parking',x:470,y:267,role:'Driver',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Both sentences express a prohibition.'},
- {id:'speed-limit',symbol:'speed-limit',name:'Speed limit: 30',x:1242,y:266,role:'Driver',cue:'drive faster than 30 km/h',answers:["You mustn't drive faster than 30 km/h.","You can't drive faster than 30 km/h."],note:'30 km/h is the maximum speed.'},
- {id:'no-entry',symbol:'no-entry',name:'No entry',x:225,y:750,role:'Driver',cue:'drive into this area',answers:["You can't drive into this area.","You mustn't drive into this area."],note:'This sign is for vehicles entering the garage area.'},
- {id:'straight',symbol:'straight',name:'Ahead only',x:1006,y:699,role:'Driver',cue:'go straight on',answers:['You must go straight on.'],note:'The blue arrow gives an instruction.'},
- {id:'right',symbol:'right',name:'Turn right',x:1244,y:350,role:'Driver',cue:'turn right',answers:['You must turn right.'],note:'The blue arrow gives an instruction.'},
- {id:'no-right',symbol:'no-right',name:'No right turn',x:206,y:351,role:'Driver',cue:'turn right',answers:["You can't turn right here.","You mustn't turn right here."],note:'Turning right is not allowed here.'},
- {id:'crossing',symbol:'crossing',name:'Pedestrian crossing',x:562,y:970,role:'Pedestrian',cue:'cross here / look both ways',answers:['You can cross here when the pedestrian light is green.','You must look both ways before you cross.'],note:'Use the zebra crossing and wait for the green pedestrian light.'}
+ {id:'parking',symbol:'parking',name:'Parking',x:480,y:88,role:'Driver',context:'At the car park behind the hospital.',cue:'park here',answers:['You can park here.'],note:'Use the marked parking spaces behind the hospital.',area:'hospital-parking'},
+ {id:'no-parking',symbol:'no-parking',name:'No parking',x:168,y:755,role:'Driver',context:'On the road beside the garage.',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Keep the road beside the yellow kerb clear.',area:'garage-kerb'},
+ {id:'speed-limit',symbol:'speed-limit',name:'Speed limit: 30',x:1006,y:266,role:'Driver',context:'On the road beside the school.',cue:'drive faster than 30 km/h',answers:["You mustn't drive faster than 30 km/h.","You can't drive faster than 30 km/h."],note:'30 km/h is the maximum speed.'},
+ {id:'no-entry',symbol:'no-entry',name:'No entry',x:1238,y:99,role:'Driver',context:'At the path behind the school.',cue:'drive into this area',answers:["You can't drive into this area.","You mustn't drive into this area."],note:'The path behind the school is for pedestrians. Bollards keep vehicles out.',area:'school-footpath'},
+ {id:'straight',symbol:'straight',name:'Ahead only',x:1026,y:851,role:'Driver',context:'Drive up the road beside the bank.',cue:'go straight on',answers:['You must go straight on.'],note:'At this junction, continue up the road beside the library.',approach:{route:'central',dir:-1,point:[980,807],movement:'straight'}},
+ {id:'right',symbol:'right',name:'Turn right',x:550,y:230,role:'Driver',context:'Drive down the road beside the hospital.',cue:'turn right',answers:['You must turn right.'],note:'At the end of this road, turn right and follow the road beside the hospital.',approach:{route:'west',dir:1,point:[516,305],movement:'right'}},
+ {id:'no-right',symbol:'no-right',name:'No right turn',x:976,y:127,role:'Driver',context:'Drive up the road beside the school.',cue:'turn right',answers:["You can't turn right here.","You mustn't turn right here."],note:'The path on your right is a pavement, protected by bollards. Cars continue straight on.',area:'school-footpath',approach:{route:'central',dir:-1,point:[934,55],movement:'no-right'}},
+ {id:'crossing',symbol:'crossing',name:'Pedestrian crossing',x:562,y:970,role:'Pedestrian',context:'Beside the bus stop.',cue:'cross here / look both ways',answers:['You can cross here when the pedestrian light is green.','You must look both ways before you cross.'],note:'Use the zebra crossing and wait for the green pedestrian light.'}
 ];
 function icon(symbol){
  const blue='#2275b8',red='#d84741',ink='#243746',white='#fffdf6';
@@ -481,9 +481,14 @@ const northRoads=[
  {id:'north-west',polygon:[[493,-2],[537,-2],[537,68],[494,68]],left:[[493,-2],[494,68]],right:[[537,-2],[537,68]],centre:[[515,-2],[515.5,68]]},
  {id:'north-east',polygon:[[909,-2],[959,-2],[957,68],[912,68]],left:[[909,-2],[912,68]],right:[[959,-2],[957,68]],centre:[[934,-2],[934.5,68]]}
 ];
+// Edge details give the signs a real destination without changing Cole's pavements.
+const parking={id:'hospital-parking',surface:[[212,-2],[486,-2],[486,26],[496,26],[496,69],[486,69],[486,73],[212,73]],bays:[222,286,350,414,478],parked:[{x:254,y:20,color:'blue'},{x:318,y:20,color:'coral'},{x:446,y:20,color:'mint'}]};
+roadSurfaces.push(parking.surface);
+const schoolFootpath={id:'school-footpath',from:[961,55],to:[1253,55],bollards:[[975,49],[975,72],[1239,49],[1239,72]]};
+const noParkingKerb={id:'garage-kerb',points:[[140,685],[135,720],[129,760]]};
 function onAsphalt(x,y){return roadSurfaces.some(poly=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [ax,ay]=poly[i],[bx,by]=poly[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;});}
 const bankCurrency={symbol:'£',x:1162,y:866,r:24};
-root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,onAsphalt};
+root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,parking,schoolFootpath,noParkingKerb,onAsphalt};
 if(typeof module!=='undefined')module.exports=root.CitySceneGeometry;
 })(typeof window!=='undefined'?window:globalThis);
 </script><script>(function(root){
@@ -492,7 +497,15 @@ const geometry=root.CitySceneGeometry||(typeof require!=='undefined'?require('./
 const depth=y=>100+Math.round(y*10),points=poly=>poly.map(p=>p.join(',')).join(' ');
 const carSize={width:48,height:17.6};
 const carPose=c=>({x:c.x,y:c.y,angle:c.angle,z:depth(c.y+8),opacity:c.opacity});
-const mapMarkup=(asset=p=>p)=>`<image href="${asset('assets/town-map-20261110.webp')}" width="1448" height="1086"/><defs><linearGradient id="north-asphalt" x1="0" x2="1"><stop stop-color="#585c70"/><stop offset="1" stop-color="#484e63"/></linearGradient><filter id="road-grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs>${geometry.northRoads.map(r=>`<g class="road-extension" data-road="${r.id}"><defs><clipPath id="${r.id}-clip"><polygon points="${points(r.polygon)}"/></clipPath></defs><polygon points="${points(r.polygon)}" fill="url(#north-asphalt)"/><rect x="${r.polygon[0][0]}" y="-2" width="55" height="70" filter="url(#road-grain)" opacity=".06" clip-path="url(#${r.id}-clip)"/><polyline points="${points(r.left)}" fill="none" stroke="#efc8bb" stroke-width="3"/><polyline points="${points(r.right)}" fill="none" stroke="#efc8bb" stroke-width="3"/><polyline points="${points(r.centre)}" fill="none" stroke="#f7f5ee" stroke-width="3" stroke-dasharray="20 20"/></g>`).join('')}`;
+function parkedCar(c){
+ const paint={blue:'#83bce5',coral:'#ef8d7a',mint:'#9bd0b8'}[c.color];
+ return `<g class="parked-car" transform="translate(${c.x} ${c.y})"><ellipse cx="2" cy="3" rx="12" ry="21" fill="#222f3d" opacity=".25"/><g fill="#263743"><rect x="-12" y="-13" width="5" height="9" rx="2"/><rect x="7" y="-13" width="5" height="9" rx="2"/><rect x="-12" y="8" width="5" height="9" rx="2"/><rect x="7" y="8" width="5" height="9" rx="2"/></g><rect x="-10" y="-20" width="20" height="40" rx="7" fill="${paint}" stroke="#425c69" stroke-width="1.3"/><path d="M-7-10Q0-14 7-10V10Q0 14-7 10Z" fill="#426d88"/><rect x="-6" y="-5" width="12" height="12" rx="2" fill="${paint}"/><path d="M-7-16V-11M7-16V-11" stroke="#fff4ca" stroke-width="2.5"/><path d="M-7 15V18M7 15V18" stroke="#ba4a4b" stroke-width="2"/><path d="M-7-16Q0-20 6-16" fill="none" stroke="#fff" opacity=".6"/></g>`;
+}
+function edgeMarkup(){
+ const p=geometry.parking,f=geometry.schoolFootpath;
+ return `<g class="hospital-car-park" data-area="${p.id}" aria-label="Car park behind the hospital"><defs><clipPath id="parking-clip"><polygon points="${points(p.surface)}"/></clipPath></defs><polygon points="${points(p.surface)}" fill="url(#north-asphalt)"/><rect x="212" y="-2" width="284" height="75" filter="url(#road-grain)" opacity=".06" clip-path="url(#parking-clip)"/><path d="M207-2V76H486" fill="none" stroke="#b47777" stroke-width="10"/><path d="M209-2V72H486" fill="none" stroke="#f4cfc1" stroke-width="7"/><path d="M486 27H495M486 69H495" stroke="#f4cfc1" stroke-width="3"/><g fill="none" stroke="#fff7e6" stroke-width="2.2">${p.bays.map(x=>`<path class="parking-bay" d="M${x}-2V43"/>`).join('')}<path d="M222 43H478"/></g>${p.parked.map(parkedCar).join('')}<path d="M208 80H482" stroke="#fbe5d3" stroke-width="3"/></g><g class="pedestrian-bollards" data-area="${f.id}" aria-label="Bollards protecting the path behind the school">${f.bollards.map(([x,y])=>`<g transform="translate(${x} ${y})"><ellipse cy="1" rx="6" ry="2.8" fill="#4e5e4d" opacity=".3"/><rect x="-3.5" y="-22" width="7" height="23" rx="3" fill="#395e50" stroke="#264b42" stroke-width="1"/><path d="M-2.5-14H2.5M-2.5-11H2.5" stroke="#f9e5b2" stroke-width="2"/><ellipse cy="-21" rx="3" ry="1.5" fill="#83a485"/></g>`).join('')}</g><polyline class="no-parking-kerb" data-area="${geometry.noParkingKerb.id}" points="${points(geometry.noParkingKerb.points)}" fill="none" stroke="#f6d763" stroke-width="4.5" stroke-linecap="round"/>`;
+}
+const mapMarkup=(asset=p=>p)=>`<image href="${asset('assets/town-map-20261110.webp')}" width="1448" height="1086"/><defs><linearGradient id="north-asphalt" x1="0" x2="1"><stop stop-color="#585c70"/><stop offset="1" stop-color="#484e63"/></linearGradient><filter id="road-grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs>${geometry.northRoads.map(r=>`<g class="road-extension" data-road="${r.id}"><defs><clipPath id="${r.id}-clip"><polygon points="${points(r.polygon)}"/></clipPath></defs><polygon points="${points(r.polygon)}" fill="url(#north-asphalt)"/><rect x="${r.polygon[0][0]}" y="-2" width="55" height="70" filter="url(#road-grain)" opacity=".06" clip-path="url(#${r.id}-clip)"/><polyline points="${points(r.left)}" fill="none" stroke="#efc8bb" stroke-width="3"/><polyline points="${points(r.right)}" fill="none" stroke="#efc8bb" stroke-width="3"/><polyline points="${points(r.centre)}" fill="none" stroke="#f7f5ee" stroke-width="3" stroke-dasharray="20 20"/></g>`).join('')}${edgeMarkup()}`;
 root.CityScene={...geometry,depth,points,carSize,carPose,mapMarkup};if(typeof module!=='undefined')module.exports=root.CityScene;
 })(typeof window!=='undefined'?window:globalThis);
 
@@ -568,7 +581,7 @@ root.CityDraw={setup,update,car};
   function renderLocation(){
     const n=W.nodes[walker.location],facing={N:'up ↑',E:'right →',S:'down ↓',W:'left ←'}[walker.facing];
     $('position').textContent=walker.waiting?'Waiting on the pavement':walker.busy?'Walking through town':n.place?'Outside '+W.venues[n.place].article:n.kind==='end'?'At the end of the pavement':n.kind==='corner'?'At a pavement corner':n.kind==='crossing'?'At the zebra crossing':'At a pavement junction';
-    $('heading').textContent='Facing '+facing+' · '+(s.mode==='rules'?'choose a numbered road sign':s.mode==='free'&&s.freeControl==='click'?'tap the pavement near a place':isActive()?'turn first, then walk':s.mode==='directions'&&s.routeSolved?'choose Another adventure on the phone':s.mode==='missions'&&missionDone()?'open your next message':'open your message to begin');
+    $('heading').textContent='Facing '+facing+' · '+(s.mode==='rules'?'choose a road sign':s.mode==='free'&&s.freeControl==='click'?'tap the pavement near a place':isActive()?'turn first, then walk':s.mode==='directions'&&s.routeSolved?'choose Another adventure on the phone':s.mode==='missions'&&missionDone()?'open your next message':'open your message to begin');
   }
   function renderModes(){
     document.querySelectorAll('[data-mode]').forEach(b=>{const yes=b.dataset.mode===s.mode;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',String(yes));b.disabled=walker.busy;});
@@ -576,11 +589,11 @@ root.CityDraw={setup,update,car};
     document.body.classList.toggle('free-click',s.mode==='free'&&s.freeControl==='click');
     $('walkHint').hidden=!(s.mode==='free'&&s.freeControl==='click');
     document.body.classList.toggle('road-rules-mode',s.mode==='rules');$('roadSigns').hidden=s.mode!=='rules';if(s.mode==='rules')renderRoadSigns();
-    $('map').setAttribute('aria-label','Town map. '+(s.mode==='rules'?'Select a numbered road sign and say a rule.':isActive()?'Arrow keys turn and walk Mr Cole.':'Open a phone message to begin.'));
+    $('map').setAttribute('aria-label','Town map. '+(s.mode==='rules'?'Select a road sign and say a rule.':isActive()?'Arrow keys turn and walk Mr Cole.':'Open a phone message to begin.'));
   }
   function renderControls(){
     const launch=$('controlLauncher'),active=isActive(),click=s.mode==='free'&&s.freeControl==='click';
-    if(!active||click){s.controls=false;launch.innerHTML=s.mode==='rules'?'<span class="chat-helper">Tap a numbered road sign ↗</span>':click?'<span class="chat-helper">Click to walk is on</span>':'<span class="chat-helper">Your adventure starts on the phone ↗</span>';}
+    if(!active||click){s.controls=false;launch.innerHTML=s.mode==='rules'?'<span class="chat-helper">Tap a road sign ↗</span>':click?'<span class="chat-helper">Click to walk is on</span>':'<span class="chat-helper">Your adventure starts on the phone ↗</span>';}
     else launch.innerHTML=`<button class="btn launch" data-action="controls" aria-expanded="${s.controls}" aria-controls="controls">${s.controls?'Hide':'Walk controls'} <small>↑ ← →</small><span>${s.controls?'⌄':'⌃'}</span></button>`;
     const el=$('controls');el.hidden=!s.controls||!active||click;
     const next=W.neighbour(walker.location,walker.facing),past=W.pastPath(walker.location,walker.facing),passedPlace=W.pastLandmark(walker.location,walker.facing),cross=next&&W.edge(walker.location,next).crossing;
@@ -631,13 +644,13 @@ root.CityDraw={setup,update,car};
     $('phoneArea').innerHTML=inboxHead('No rush. No right answer.')+`<div class="free-screen"><img src="${asset('assets/cole-south.png')}" class="free-cole" alt="Mr Cole"><h3>Let’s take<br>the scenic route.</h3><p>You choose where to go.<br>Listen, speak and explore the town.</p><div class="segmented" role="group" aria-label="Free walk controls"><button data-phone="freeArrows" class="${s.freeControl==='arrows'?'active':''}" aria-pressed="${s.freeControl==='arrows'}">Arrow controls ↑</button><button data-phone="freeClick" class="${s.freeControl==='click'?'active':''}" aria-pressed="${s.freeControl==='click'}">Click to walk ↗</button></div><div class="phrase-card"><button data-phone="phrase" aria-label="Another speaking idea">↻</button><small>A SPEAKING IDEA</small><p>${freePhrases[phrase%freePhrases.length]}</p></div></div>`;
   }
   function renderRoadSigns(){
-    $('roadSigns').innerHTML=R.signs.map((r,i)=>`<button type="button" class="road-sign-marker ${i===s.ruleIndex?'selected':''}" data-rule-index="${i}" aria-label="Sign ${i+1}: ${safe(r.name)}" aria-pressed="${i===s.ruleIndex}" title="${safe(r.name)}" style="left:${r.x/W.W*100}%;top:${r.y/W.H*100}%"><span class="sign-base"></span><span class="sign-post"></span><span class="sign-face">${R.icon(r.symbol)}</span><span class="sign-number">${i+1}</span></button>`).join('');
+    $('roadSigns').innerHTML=R.signs.map((r,i)=>`<button type="button" class="road-sign-marker ${i===s.ruleIndex?'selected':''}" data-rule-index="${i}" aria-label="${safe(r.name)}" aria-pressed="${i===s.ruleIndex}" title="${safe(r.name)}" style="left:${r.x/W.W*100}%;top:${r.y/W.H*100}%"><span class="sign-base"></span><span class="sign-post"></span><span class="sign-face">${R.icon(r.symbol)}</span></button>`).join('');
   }
   function renderRules(){
     const r=R.signs[s.ruleIndex];
-    $('phoneArea').innerHTML=`<div class="phone-head"><div><h2>Road rules</h2><small>Tap a sign. Say a sentence.</small></div><span class="rule-count">${s.ruleIndex+1} / ${R.signs.length}</span></div><div class="rules-scroll"><div class="rule-role">YOU ARE A ${r.role.toUpperCase()}</div><div class="rule-picture" role="img" aria-label="${safe(r.name)}">${R.icon(r.symbol)}</div><h3>What does this sign mean?</h3><p class="rule-cue">${safe(r.cue)}</p><div class="modal-bank" aria-label="Choose a modal verb"><span>can</span><span>can’t</span><span>must</span><span>mustn’t</span></div>${s.ruleRevealed?`<div class="rule-example" role="status"><small>EXAMPLES</small>${r.answers.map(a=>`<p>${safe(a)}</p>`).join('')}<div class="rule-note">${safe(r.note)}</div><button class="rule-speak" data-phone="speakRule" aria-label="Read the first example aloud">Read aloud</button></div>`:'<p class="rule-tip">Say your rule first. Then open the examples.</p>'}</div><div class="chat-composer"><button class="phone-btn solid" data-phone="ruleReveal" aria-expanded="${s.ruleRevealed}">${s.ruleRevealed?'Hide examples':'Show examples'}</button><div class="rule-navigation"><button class="phone-btn" data-phone="rulePrevious">Previous sign</button><button class="phone-btn" data-phone="ruleNext">Next sign</button></div></div>`;
+    $('phoneArea').innerHTML=`<div class="phone-head"><div><h2>Road rules</h2><small>Tap a sign. Say a sentence.</small></div><span class="rule-count">${s.ruleIndex+1} / ${R.signs.length}</span></div><div class="rules-scroll"><div class="rule-role">YOU ARE A ${r.role.toUpperCase()}</div><div class="rule-picture" role="img" aria-label="${safe(r.name)}">${R.icon(r.symbol)}</div><p class="rule-context">${safe(r.context)}</p><h3>What does it mean?</h3><p class="rule-cue">${safe(r.cue)}</p><div class="modal-bank" aria-label="Choose a modal verb"><span>can</span><span>can’t</span><span>must</span><span>mustn’t</span></div>${s.ruleRevealed?`<div class="rule-example" role="status"><small>EXAMPLES</small>${r.answers.map(a=>`<p>${safe(a)}</p>`).join('')}<div class="rule-note">${safe(r.note)}</div><button class="rule-speak" data-phone="speakRule" aria-label="Read the first example aloud">Read aloud</button></div>`:''}</div><div class="chat-composer"><button class="phone-btn solid" data-phone="ruleReveal" aria-expanded="${s.ruleRevealed}">${s.ruleRevealed?'Hide examples':'Show examples'}</button><div class="rule-navigation"><button class="phone-btn" data-phone="rulePrevious">Previous sign</button><button class="phone-btn" data-phone="ruleNext">Next sign</button></div></div>`;
   }
-  function selectRule(index){s.ruleIndex=(index+R.signs.length)%R.signs.length;s.ruleRevealed=false;window.speechSynthesis?.cancel();renderRoadSigns();renderRules();$('announcer').textContent='Sign '+(s.ruleIndex+1)+'. You are a '+R.signs[s.ruleIndex].role.toLowerCase()+'. Say a rule.';}
+  function selectRule(index){s.ruleIndex=(index+R.signs.length)%R.signs.length;s.ruleRevealed=false;window.speechSynthesis?.cancel();renderRoadSigns();renderRules();$('announcer').textContent=R.signs[s.ruleIndex].name+'. You are a '+R.signs[s.ruleIndex].role.toLowerCase()+'. Say a rule.';}
   function routePrefix(){if(!s.route)return 0;let i=0;while(i<s.routeTrail.length&&s.routeTrail[i]===s.route.path[i])i++;return Math.max(0,i-1);}
   function routeOff(){return s.routeTrail.some((id,i)=>id!==s.route?.path[i]);}
   function newRoute(){s.route=W.routeTask(walker.location,walker.facing,s.routeSerial);s.routeTrail=[walker.location];s.routeSolved=false;s.accepted=false;s.chat=false;s.answer='';s.feedback='';}
@@ -728,7 +741,7 @@ root.CityDraw={setup,update,car};
   $('phoneArea').addEventListener('submit',e=>{if(e.target.id==='answerForm'){e.preventDefault();checkAnswer();}});
   $('phoneArea').addEventListener('input',e=>{if(e.target.id==='answer')s.answer=e.target.value;});
   $('roadSigns').addEventListener('click',e=>{const b=e.target.closest('[data-rule-index]');if(b&&s.mode==='rules')selectRule(Number(b.dataset.ruleIndex));});
-  $('spots').addEventListener('click',e=>{const b=e.target.closest('[data-place]');if(!b)return;if(s.mode==='rules'){toast('Tap one of the numbered road signs.');return;}toast(s.mode==='free'?'That is '+W.venues[b.dataset.place].article+'. Tap the pavement in front of it to walk there.':'Help Cole walk to a place, then reply on the phone.');});
+  $('spots').addEventListener('click',e=>{const b=e.target.closest('[data-place]');if(!b)return;if(s.mode==='rules'){toast('Tap one of the road signs.');return;}toast(s.mode==='free'?'That is '+W.venues[b.dataset.place].article+'. Tap the pavement in front of it to walk there.':'Help Cole walk to a place, then reply on the phone.');});
   $('map').addEventListener('click',e=>{
     if(s.mode!=='free'||s.freeControl!=='click'||!canAct()||e.target.closest('.place-spot,.controls'))return;
     const r=$('map').getBoundingClientRect(),id=nearestWalkPoint((e.clientX-r.left)/r.width*W.W,(e.clientY-r.top)/r.height*W.H);
@@ -769,7 +782,7 @@ root.CityDraw={setup,update,car};
   function updateClock(){const now=new Date();$('clock').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}updateClock();setInterval(updateClock,30000);
   applySettings();renderAll();requestAnimationFrame(tick);
   // Read-only diagnostics. The simulation itself is shared with the regression tests.
-  window.cityMessages={getState:()=>({version:'20261112-road-rules',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
+  window.cityMessages={getState:()=>({version:'20261112-sign-context',mode:s.mode,ruleIndex:s.ruleIndex,ruleRevealed:s.ruleRevealed,location:walker.location,facing:walker.facing,busy:walker.busy,waiting:walker.waiting,x:walker.x,y:walker.y,score:score(),accepted:s.accepted,route:s.route&&{path:s.route.path,instructions:s.route.instructions,target:s.route.target},routeTrail:[...s.routeTrail],routeIndex:s.routeSerial,routeSolved:s.routeSolved,trafficMode:traffic.mode,signals:traffic.signals.map(x=>({id:x.id,phase:x.phase,occupied:x.occupants.size})),cars:traffic.cars.map(c=>({...c}))})};
 })();
 
 

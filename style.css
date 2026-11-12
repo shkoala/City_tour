@@ -51,20 +51,20 @@
 /* Road rules: sign pictures and oral prompts appear only in their own mode. */
 .road-sign-layer{position:absolute;inset:0;z-index:19000;pointer-events:none}
 .road-sign-layer[hidden]{display:none!important}
-.road-sign-marker{position:absolute;width:4.2%;min-width:32px;aspect-ratio:.73;transform:translate(-50%,-100%);border:0;background:none;padding:0;pointer-events:auto;cursor:pointer;isolation:isolate;filter:drop-shadow(1px 2px 1px #20352b44)}
+.road-sign-marker{position:absolute;width:3.6%;min-width:26px;aspect-ratio:.73;transform:translate(-50%,-100%);border:0;background:none;padding:0;pointer-events:auto;cursor:pointer;isolation:isolate;filter:drop-shadow(1px 2px 1px #20352b44)}
 .sign-face{position:absolute;inset:0 0 27%;display:grid;place-items:center;border-radius:50%;transition:transform .15s}
 .sign-face svg{width:100%;height:100%;overflow:visible}
 .sign-post{position:absolute;left:46%;width:8%;top:45%;bottom:3%;background:linear-gradient(90deg,#83938c,#455d53);border-radius:2px;z-index:-1}
 .sign-base{position:absolute;left:33%;bottom:0;width:34%;height:5%;background:#4a6157;border-radius:50%;z-index:-1}
-.sign-number{position:absolute;right:-3px;top:-4px;background:#fffdf3;color:#355b49;border:1px solid #78977b;border-radius:50%;min-width:17px;height:17px;display:grid;place-items:center;font:700 10px system-ui;box-shadow:0 1px 3px #20352b33}
 .road-sign-marker:hover .sign-face,.road-sign-marker.selected .sign-face{transform:scale(1.13)}
 .road-sign-marker.selected:before{content:'';position:absolute;inset:-7px -7px 17%;border:2px solid #e4ac55;border-radius:50%;background:#fff6d522;z-index:-2}
 .road-sign-marker:focus-visible{outline:3px solid #365c8e;outline-offset:6px;border-radius:12px}
-.rules-scroll{flex:1;min-height:0;overflow:auto;padding:15px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.rules-scroll{flex:1;min-height:0;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .rule-role{font:700 9px system-ui;letter-spacing:1.2px;color:#7f9373;background:#edf2e3;padding:7px 11px;border-radius:20px}
-.rule-picture{width:112px;min-height:112px;display:grid;place-items:center;margin:2px 0;filter:drop-shadow(0 4px 1px #263f3922)}
+.rule-picture{width:100px;min-height:100px;display:grid;place-items:center;margin:2px 0;filter:drop-shadow(0 4px 1px #263f3922)}
 .rule-picture svg{width:100%;height:100%}
 .rules-scroll h3{font:650 19px/1.25 system-ui;margin:0;color:#304e40;letter-spacing:-.3px}
+.rule-context{margin:0;max-width:230px;font-size:11px;line-height:1.5;color:#7b8c70}
 .rule-cue{margin:0;font-size:14px;line-height:1.5;color:#6b7f61}
 .modal-bank{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin:3px 0}
 .modal-bank span{background:#e9e8f4;color:#665981;border-radius:8px;padding:6px 8px;font:650 12px system-ui}
@@ -78,4 +78,4 @@
 .rule-navigation{display:flex;gap:7px}.rule-navigation .phone-btn{flex:1;justify-content:center;font-size:10px;min-height:33px;padding:7px 4px}
 .phone-head .rule-count{font:650 11px system-ui;color:#6e8762;background:#eaf0e1;padding:6px 8px;border-radius:9px;white-space:nowrap}
 @media(max-width:1150px){.mode{padding-inline:8px}.modes{gap:1px}.rule-picture{width:94px;min-height:94px}.rules-scroll{padding:11px 14px;gap:8px}.rules-scroll h3{font-size:17px}}
-@media(max-width:700px){.road-sign-marker{min-width:25px}.sign-number{height:14px;min-width:14px;font-size:8px;right:-2px;top:-2px}.mode{font-size:10px}.modal-bank span{padding:6px 7px}.rule-picture{width:100px;min-height:100px}}
+@media(max-width:700px){.road-sign-marker{min-width:25px}.mode{font-size:10px}.modal-bank span{padding:6px 7px}.rule-picture{width:100px;min-height:100px}}

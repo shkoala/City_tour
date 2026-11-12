@@ -2,14 +2,14 @@
 (function(root){
 'use strict';
 const signs=[
- {id:'parking',symbol:'parking',name:'Parking',x:1310,y:1020,role:'Driver',cue:'park here',answers:['You can park here.'],note:'Parking is allowed here.'},
- {id:'no-parking',symbol:'no-parking',name:'No parking',x:470,y:267,role:'Driver',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Both sentences express a prohibition.'},
- {id:'speed-limit',symbol:'speed-limit',name:'Speed limit: 30',x:1242,y:266,role:'Driver',cue:'drive faster than 30 km/h',answers:["You mustn't drive faster than 30 km/h.","You can't drive faster than 30 km/h."],note:'30 km/h is the maximum speed.'},
- {id:'no-entry',symbol:'no-entry',name:'No entry',x:225,y:750,role:'Driver',cue:'drive into this area',answers:["You can't drive into this area.","You mustn't drive into this area."],note:'This sign is for vehicles entering the garage area.'},
- {id:'straight',symbol:'straight',name:'Ahead only',x:1006,y:699,role:'Driver',cue:'go straight on',answers:['You must go straight on.'],note:'The blue arrow gives an instruction.'},
- {id:'right',symbol:'right',name:'Turn right',x:1244,y:350,role:'Driver',cue:'turn right',answers:['You must turn right.'],note:'The blue arrow gives an instruction.'},
- {id:'no-right',symbol:'no-right',name:'No right turn',x:206,y:351,role:'Driver',cue:'turn right',answers:["You can't turn right here.","You mustn't turn right here."],note:'Turning right is not allowed here.'},
- {id:'crossing',symbol:'crossing',name:'Pedestrian crossing',x:562,y:970,role:'Pedestrian',cue:'cross here / look both ways',answers:['You can cross here when the pedestrian light is green.','You must look both ways before you cross.'],note:'Use the zebra crossing and wait for the green pedestrian light.'}
+ {id:'parking',symbol:'parking',name:'Parking',x:480,y:88,role:'Driver',context:'At the car park behind the hospital.',cue:'park here',answers:['You can park here.'],note:'Use the marked parking spaces behind the hospital.',area:'hospital-parking'},
+ {id:'no-parking',symbol:'no-parking',name:'No parking',x:168,y:755,role:'Driver',context:'On the road beside the garage.',cue:'park here',answers:["You can't park here.","You mustn't park here."],note:'Keep the road beside the yellow kerb clear.',area:'garage-kerb'},
+ {id:'speed-limit',symbol:'speed-limit',name:'Speed limit: 30',x:1006,y:266,role:'Driver',context:'On the road beside the school.',cue:'drive faster than 30 km/h',answers:["You mustn't drive faster than 30 km/h.","You can't drive faster than 30 km/h."],note:'30 km/h is the maximum speed.'},
+ {id:'no-entry',symbol:'no-entry',name:'No entry',x:1238,y:99,role:'Driver',context:'At the path behind the school.',cue:'drive into this area',answers:["You can't drive into this area.","You mustn't drive into this area."],note:'The path behind the school is for pedestrians. Bollards keep vehicles out.',area:'school-footpath'},
+ {id:'straight',symbol:'straight',name:'Ahead only',x:1026,y:851,role:'Driver',context:'Drive up the road beside the bank.',cue:'go straight on',answers:['You must go straight on.'],note:'At this junction, continue up the road beside the library.',approach:{route:'central',dir:-1,point:[980,807],movement:'straight'}},
+ {id:'right',symbol:'right',name:'Turn right',x:550,y:230,role:'Driver',context:'Drive down the road beside the hospital.',cue:'turn right',answers:['You must turn right.'],note:'At the end of this road, turn right and follow the road beside the hospital.',approach:{route:'west',dir:1,point:[516,305],movement:'right'}},
+ {id:'no-right',symbol:'no-right',name:'No right turn',x:976,y:127,role:'Driver',context:'Drive up the road beside the school.',cue:'turn right',answers:["You can't turn right here.","You mustn't turn right here."],note:'The path on your right is a pavement, protected by bollards. Cars continue straight on.',area:'school-footpath',approach:{route:'central',dir:-1,point:[934,55],movement:'no-right'}},
+ {id:'crossing',symbol:'crossing',name:'Pedestrian crossing',x:562,y:970,role:'Pedestrian',context:'Beside the bus stop.',cue:'cross here / look both ways',answers:['You can cross here when the pedestrian light is green.','You must look both ways before you cross.'],note:'Use the zebra crossing and wait for the green pedestrian light.'}
 ];
 function icon(symbol){
  const blue='#2275b8',red='#d84741',ink='#243746',white='#fffdf6';

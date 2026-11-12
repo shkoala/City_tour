@@ -39,8 +39,13 @@ const northRoads=[
  {id:'north-west',polygon:[[493,-2],[537,-2],[537,68],[494,68]],left:[[493,-2],[494,68]],right:[[537,-2],[537,68]],centre:[[515,-2],[515.5,68]]},
  {id:'north-east',polygon:[[909,-2],[959,-2],[957,68],[912,68]],left:[[909,-2],[912,68]],right:[[959,-2],[957,68]],centre:[[934,-2],[934.5,68]]}
 ];
+// Edge details give the signs a real destination without changing Cole's pavements.
+const parking={id:'hospital-parking',surface:[[212,-2],[486,-2],[486,26],[496,26],[496,69],[486,69],[486,73],[212,73]],bays:[222,286,350,414,478],parked:[{x:254,y:20,color:'blue'},{x:318,y:20,color:'coral'},{x:446,y:20,color:'mint'}]};
+roadSurfaces.push(parking.surface);
+const schoolFootpath={id:'school-footpath',from:[961,55],to:[1253,55],bollards:[[975,49],[975,72],[1239,49],[1239,72]]};
+const noParkingKerb={id:'garage-kerb',points:[[140,685],[135,720],[129,760]]};
 function onAsphalt(x,y){return roadSurfaces.some(poly=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [ax,ay]=poly[i],[bx,by]=poly[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)inside=!inside;}return inside;});}
 const bankCurrency={symbol:'£',x:1162,y:866,r:24};
-root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,onAsphalt};
+root.CitySceneGeometry={foregrounds,bakedSignals,bankCurrency,roadSurfaces,northRoads,parking,schoolFootpath,noParkingKerb,onAsphalt};
 if(typeof module!=='undefined')module.exports=root.CitySceneGeometry;
 })(typeof window!=='undefined'?window:globalThis);
