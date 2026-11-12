@@ -14,8 +14,8 @@ const raw={
  mTopL:[210,348],mTopR:[914,348],rTop:[1245,348],
  mBackL:[184,542],theatre:[350,542],cinema:[594,542],cafe:[826,542],mBackR:[934,550],rBackL:[1007,550],bakery:[1120,542],rBackR:[1280,542],
  mL:[151,756],mCrossW:[186,756],garage:[280,756],police:[578,756],post:[838,756],mCrossE:[915,756],mR:[938,756],rL:[1008,756],library:[1165,756],rCross:[1261,756],rR:[1290,756],
- gN:[186,850],gL:[130,1025],greengrocer:[310,1025],gR:[459,1025],gX:[459,966],
- bL:[550,1025],bus:[720,1025],bR:[935,1025],bXL:[546,966],bXR:[935,966],bN:[925,850],
+ gN:[186,850],gNE:[459,850],gL:[130,1025],greengrocer:[310,1025],gR:[459,1025],gX:[459,966],
+ bL:[550,1025],bus:[720,1025],bR:[935,1025],bXL:[546,966],bXR:[935,966],bNW:[550,850],bN:[925,850],
  kL:[1025,1025],bank:[1160,1025],kR:[1305,1025],kX:[1025,966],kNE:[1305,855],kN:[1261,850]
 };
 const nodes=Object.fromEntries(Object.entries(raw).map(([id,[x,y]])=>[id,{id,x,y,place:venues[id]?id:null}]));
@@ -49,9 +49,9 @@ connect('mTopL','hL',[[219,340],[222,273,'h1-west']]);connect('mTopR','pR',[[899
 connect('rTop','sR',[[1214,340],[1214,274,'h1-east']]);connect('rTop','rBackR',[[1264,420]],['bakery']);
 line(['rBackL','bakery','rBackR']);line(['rL','library','rCross','rR']);connect('rBackL','rL',[[1002,600],[1005,690]],['library']);connect('rBackR','rR',[],['library']);
 connect('mBackR','rBackL',[[941,550],[995,550,'courtyard']]);connect('mR','rL',[[943,756],[1007,756,'post-library']]);
-line(['gL','greengrocer','gR']);connect('gL','gN',[[137,980],[145,930],[147,880],[163,860]]);connect('gR','gX');
+line(['gL','greengrocer','gR']);connect('gL','gN',[[137,980],[145,930],[147,880],[163,860]]);line(['gR','gX','gNE','gN']);
 connect('mCrossW','gN',[[186,768],[186,846,'h2-west']]);
-line(['bL','bus','bR']);connect('bL','bXL');connect('bR','bXR');connect('bXR','bN');connect('gX','bXL',[[474,966],[539,966,'bottom-left']]);
+line(['bL','bus','bR']);line(['bL','bXL','bNW','bN']);connect('bR','bXR');connect('bXR','bN');connect('gX','bXL',[[474,966],[539,966,'bottom-left']]);
 connect('mCrossE','bN',[[915,766],[915,845,'h2-middle']]);
 line(['kL','bank','kR']);connect('kL','kX');connect('kR','kNE');connect('kNE','kN');
 connect('bXR','kX',[[949,966],[1018,966,'bottom-right']]);connect('rCross','kN',[[1261,768],[1261,845,'h2-east']]);

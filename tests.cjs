@@ -13,6 +13,10 @@ for(const e of W.edgeList)for(const [a,b] of [[e.a,e.b],[e.b,e.a]]){
 }
 for(const p of [[420,690],[700,690],[570,700]])ok(!W.isOnPavement(...p),'Joined civic row cannot be crossed');ok(!W.edge('police','cinema'),'No path through connected civic row');
 function simulate(t,w,seconds){for(let i=0;i<seconds*60;i++){t.tick(1/60);w?.tick(1/60);if(w){ok(Number.isFinite(w.x)&&Number.isFinite(w.y));if(w.waiting)ok(W.isOnPavement(w.x,w.y),'Never wait in the road');if(w.held){const sig=t.signal(w.held);eq(sig.phase,'walk');ok(t.clear(sig),'No car on occupied zebra');}else if(w.moving)ok(W.isOnPavement(w.x,w.y),'Unheld movement is pavement');}}}
+// A zebra approach must not block the visible pavement continuing alongside it.
+for(const [start,corner,turn,finish] of [['gX','gNE',-1,'gN'],['bXL','bNW',1,'bN']]){
+ const t=new Traffic(W.crossings),w=new Walker(W,t);w.reset(start,'N');eq(W.neighbour(w.location,w.facing),corner,'Continue north alongside the crossing');ok(w.walk([start,corner]));simulate(t,w,3);eq(w.location,corner);eq(w.facing,'N');ok(w.turn(turn));eq(W.neighbour(w.location,w.facing),finish,'Turn along the rear pavement');ok(w.walk([corner,finish]));simulate(t,w,4);eq(w.location,finish);ok(!w.busy);
+}
 {
  const t=new Traffic(W.crossings),w=new Walker(W,t);eq(w.location,'bus');eq(w.facing,'S');eq(w.x,720);eq(w.y,1025);ok(!w.walk(['bus','school']));w.turn(-1);eq(w.facing,'E');w.reset();eq(w.facing,'S'); 
 }
